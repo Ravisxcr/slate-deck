@@ -1,0 +1,8 @@
+[package]
+name = "typeset"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["Ravi"]
+license = "MIT"
+description = "Opinionated Typst presentation package: strict grid, one accent color, icon system."
+categories = ["presentation"]
