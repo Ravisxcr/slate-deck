@@ -7,6 +7,8 @@
 #import "components/stat.typ": stat-hero
 #import "components/quote.typ": pull-quote
 #import "components/code.typ": code-block
+#import "components/diagram.typ": diagram
+#import "components/er-table.typ": er-table
 #import "theme.typ": typeset-theme, spacing, type-scale, fonts
 
 #let typeset = (
@@ -21,4 +23,6 @@
   stat-hero: stat-hero,
   pull-quote: pull-quote,
   code-block: code-block,
+  diagram: diagram,
+  er-table: er-table,
 )

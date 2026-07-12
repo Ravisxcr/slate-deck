@@ -73,6 +73,7 @@ from `accent-hue`/`accent-chroma`.
 | `stat` | `kicker`, `value`, `caption`, `note` | navy background, oversized number |
 | `image` | `image`, `caption-title`, `caption-body` | full-bleed, `image` is any content (an `image()` call or placeholder box) |
 | `code` | `kicker`, `kicker-icon`, `title`, `code`, `lang` | navy background, line-numbered, syntax-colored via Typst's built-in `raw` highlighting |
+| `diagram` | `kicker`, `kicker-icon`, `title`, `nodes`, `edges`, `cols`, `rows`, `theme` | manual-placement node/edge diagram — architecture, flowcharts, ER diagrams |
 | `quote` | `quote`, `name`, `role` | vertically centered pull-quote |
 | `team` | `kicker`, `title`, `members`, `columns` | `members` is an array of `(name:, role:)` |
 | `closing` | `title`, `subtitle`, `footer` | mirrors `title`, accent background |
@@ -92,6 +93,15 @@ Usable directly inside a `content`-kind slide body:
 - `compare-card(label, title, items, recommended: false)`, `team-card(name, role)`,
   `stat-hero(value, caption)`, `pull-quote(body, name, role)`, `code-block(body, lang: "typ")` —
   the pieces each slide kind is built from, usable standalone if you need a custom layout.
+- `diagram(nodes, edges: (), cols:, rows:, cell:, gutter:, theme: "light")` — manual-placement
+  node/edge diagram. Nodes sit on an explicit `(col:, row:)` grid (0-indexed) and render as either
+  an icon+label box (`kind: "box"`, default) or a schema table (`kind: "table"`, via `er-table()`).
+  Edges reference node ids (or `(id:, row:)` for a row-level anchor into a table node) and draw as
+  straight or right-angle elbow connectors, with optional arrowheads, dashing, and labels. No
+  auto-layout — you place every node explicitly, same philosophy as the rest of the package.
+- `er-table(name, columns, width:, height: auto, accent: false)` — standalone DB/ER schema table
+  (header bar + one row per column, with a key icon for `key: "pk"`/`"fk"` columns). Used by
+  `diagram()` for table nodes, but usable directly in any content slide too.
 
 ## Icons
 

@@ -73,6 +73,92 @@
 )
 
 #slide(
+  kind: "code",
+  kicker: [API surface, light variant],
+  kicker-icon: "code",
+  title: [Same block, paper background],
+  theme: "light",
+  code: "#import \"@local/typeset:0.1.0\": *\n\nslide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+)
+
+#slide(
+  kind: "diagram",
+  kicker: [Component: diagram()],
+  kicker-icon: "workflow",
+  title: [Request path through the new service],
+  nodes: (
+    (id: "cdn", pos: (col: 0, row: 0), icon: "globe", label: [CloudFront]),
+    (id: "api", pos: (col: 1, row: 0), icon: "server", label: [API Gateway]),
+    (id: "fn", pos: (col: 2, row: 0), icon: "boxes", label: [Lambda]),
+    (id: "cache", pos: (col: 2, row: 1), icon: "database-zap", label: [ElastiCache]),
+    (id: "db", pos: (col: 3, row: 1), icon: "database", label: [DynamoDB], accent: true),
+  ),
+  edges: (
+    (from: "cdn", to: "api"),
+    (from: "api", to: "fn"),
+    (from: "fn", to: "cache", style: "dashed", arrow: "both", label: [cache]),
+    (from: "fn", to: "db", label: [write]),
+  ),
+  cols: 4,
+  rows: 2,
+  theme: "dark",
+)
+
+#slide(kicker: [Component: diagram(), workflow variant], title: [Same primitive, a linear flowchart instead])[
+  #v(spacing.sm)
+  #diagram(
+    (
+      (id: "s1", pos: (col: 0, row: 0), icon: "inbox", label: [Request received], icon-layout: "left"),
+      (id: "s2", pos: (col: 1, row: 0), icon: "check-circle-2", label: [Validate], icon-layout: "left"),
+      (id: "s3", pos: (col: 2, row: 0), icon: "cog", label: [Process], icon-layout: "left"),
+      (id: "s4", pos: (col: 3, row: 0), icon: "send", label: [Respond], icon-layout: "left", accent: true),
+    ),
+    edges: (
+      (from: "s1", to: "s2"),
+      (from: "s2", to: "s3"),
+      (from: "s3", to: "s4"),
+    ),
+    cols: 4,
+    rows: 1,
+    theme: "light",
+  )
+]
+
+#slide(kicker: [Component: diagram(), kind: "table" nodes], title: [ER diagrams get row-level anchors for free])[
+  #v(spacing.sm)
+  #diagram(
+    (
+      (
+        id: "customers", pos: (col: 0, row: 0), kind: "table",
+        name: "customers",
+        columns: (
+          (name: "id", type: "uuid", key: "pk"),
+          (name: "email", type: "text"),
+          (name: "created_at", type: "timestamp"),
+        ),
+      ),
+      (
+        id: "orders", pos: (col: 1, row: 0), kind: "table",
+        name: "orders",
+        columns: (
+          (name: "id", type: "uuid", key: "pk"),
+          (name: "customer_id", type: "uuid", key: "fk"),
+          (name: "total", type: "numeric"),
+          (name: "status", type: "text"),
+        ),
+      ),
+    ),
+    edges: (
+      (from: (id: "orders", row: 1), to: (id: "customers", row: 0), label: [FK]),
+    ),
+    cell: (width: 220pt, height: 100pt),
+    cols: 2,
+    rows: 1,
+    theme: "light",
+  )
+]
+
+#slide(
   kind: "quote",
   quote: [Switching to the shared template meant every team's deck finally looked like it came from the same company.],
   name: [Priya Nathan],

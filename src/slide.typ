@@ -6,6 +6,7 @@
 #import "components/stat.typ": stat-hero
 #import "components/quote.typ": pull-quote
 #import "components/code.typ": code-block
+#import "components/diagram.typ": diagram
 
 #let _footer-progress(progress, fill) = {
   if progress != none {
@@ -168,9 +169,14 @@
   ]
 }
 
-#let _code-slide(kicker: none, kicker-icon: none, title: none, code: none, lang: "typ", progress: none) = context {
+#let _code-slide(kicker: none, kicker-icon: none, title: none, code: none, lang: "typ", theme: "dark", progress: none) = context {
   let t = typeset-theme.get()
-  page(fill: t.navy)[
+  let is-light = theme == "light"
+  let bg = if is-light { t.paper } else { t.navy }
+  let title-fill = if is-light { t.ink } else { t.on-navy }
+  let kicker-fill = if is-light { t.accent } else { t.on-navy-accent }
+  let footer-fill = if is-light { t.ink-faint } else { t.on-navy-muted }
+  page(fill: bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
         #if kicker-icon != none {
@@ -178,21 +184,78 @@
             columns: (auto, auto),
             column-gutter: spacing.sm,
             align: horizon,
-            icon(kicker-icon, size: 11pt, color: t.on-navy-accent),
-            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: t.on-navy-accent)[#upper(kicker)],
+            icon(kicker-icon, size: 11pt, color: kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)],
           )
         } else {
-          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: t.on-navy-accent)[#upper(kicker)]
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
         }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: 30pt, fill: t.on-navy)[#title]
+        #text(font: fonts.display, weight: 700, size: 30pt, fill: title-fill)[#title]
         #v(spacing.xxl - spacing.xs)
       ]
-      #code-block(code, lang: lang)
+      #code-block(code, lang: lang, theme: theme)
     ]
-    #_footer-progress(progress, t.on-navy-muted)
+    #_footer-progress(progress, footer-fill)
+  ]
+}
+
+#let _diagram-slide(
+  kicker: none,
+  kicker-icon: none,
+  title: none,
+  nodes: (),
+  edges: (),
+  cols: 3,
+  rows: 2,
+  cell: (width: 150pt, height: 80pt),
+  gutter: (x: spacing.xl, y: spacing.lg),
+  table-style: (header-height: 22pt, row-height: 18pt),
+  theme: "dark",
+  progress: none,
+) = context {
+  let t = typeset-theme.get()
+  let is-light = theme == "light"
+  let bg = if is-light { t.paper } else { t.navy }
+  let title-fill = if is-light { t.ink } else { t.on-navy }
+  let kicker-fill = if is-light { t.accent } else { t.on-navy-accent }
+  let footer-fill = if is-light { t.ink-faint } else { t.on-navy-muted }
+  page(fill: bg)[
+    #pad(x: spacing.page-x, y: spacing.page-y)[
+      #if kicker != none [
+        #if kicker-icon != none {
+          grid(
+            columns: (auto, auto),
+            column-gutter: spacing.sm,
+            align: horizon,
+            icon(kicker-icon, size: 11pt, color: kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)],
+          )
+        } else {
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
+        }
+        #v(spacing.sm)
+      ]
+      #if title != none [
+        #text(font: fonts.display, weight: 700, size: 30pt, fill: title-fill)[#title]
+        #v(spacing.xxl - spacing.xs)
+      ]
+      #align(center)[
+        #diagram(
+          nodes,
+          edges: edges,
+          cols: cols,
+          rows: rows,
+          cell: cell,
+          gutter: gutter,
+          table-style: table-style,
+          theme: theme,
+        )
+      ]
+    ]
+    #_footer-progress(progress, footer-fill)
   ]
 }
 
@@ -263,6 +326,8 @@
     _image-slide(..named)
   } else if kind == "code" {
     _code-slide(..named)
+  } else if kind == "diagram" {
+    _diagram-slide(..named)
   } else if kind == "quote" {
     _quote-slide(..named)
   } else if kind == "team" {
