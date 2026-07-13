@@ -3,3 +3,5 @@ examples/*.png
 scripts/*.png
 
 CLAUDE.local.md
+.venv/
+site/

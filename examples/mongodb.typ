@@ -45,10 +45,21 @@
         ))
       ),
       code-block(
-        "{\n  _id: ObjectId(\"64f1...\"),\n  user: \"jsmith\",\n  status: \"active\",\n  roles: [\"admin\", \"billing\"],\n  address: {\n    city: \"Austin\",\n    zip: \"78701\"\n  },\n  lastLogin: ISODate(\"2026-07-01\")\n}",
-        lang: "js",
-        theme: "light",
-      ),
+        theme: "light", 
+        highlight: (2, (4, 5)))[
+```js
+{
+  _id: ObjectId("64f1..."),
+  user: "jsmith",
+  status: "active",
+  roles: ["admin", "billing"],
+  address: {
+    city: "Austin",
+    zip: "78701"
+  },
+  lastLogin: ISODate("2026-07-01")
+}
+```],
     )
   }
 ]

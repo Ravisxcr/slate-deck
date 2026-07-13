@@ -3,8 +3,8 @@
 An opinionated Typst presentation package: strict grid, one accent color, and a small set of
 slide kinds and components that cover most corporate-update / dev-talk decks. Every slide is
 declared with structured parameters — no absolute positioning, no hand-tuned CSS — so a deck reads
-like a spec and rebrands with a one-line config change. See [CLAUDE.md](CLAUDE.md) for the design
-tokens and architecture behind it.
+like a spec and rebrands with a one-line config change. See [docs/](docs/index.md) for the full
+design-token and API reference behind it.
 
 `examples/demo.typ` is the spec — one example of every slide kind, in mockup order.
 `examples/showcase.typ` goes further: components reused outside their default slide kind, `icon()`
@@ -143,3 +143,16 @@ Archivo (500/600/700/800), IBM Plex Sans (400/500/600), IBM Plex Mono (400/500/6
 OFL-1.1, vendored as static weights under `assets/fonts/` (Typst 0.14 doesn't render variable
 fonts correctly, so no single variable-font file is used). See each family's `OFL.txt` for
 license text.
+
+## Full docs
+
+This README is the quick-start. For the complete reference — every slide kind's parameter table,
+every component's API, the `diagram()` routing algorithm, and the full design-token list — see
+[**docs/**](docs/index.md):
+
+- [docs/getting-started.md](docs/getting-started.md) — install, compile, gotchas
+- [docs/design-tokens.md](docs/design-tokens.md) — color, typography, spacing, coordinate system
+- [docs/slides.md](docs/slides.md) — every `slide(kind: "...")` and its parameters
+- [docs/components.md](docs/components.md) — standalone components
+- [docs/diagram.md](docs/diagram.md) — `diagram()` node/edge placement and routing
+- [docs/icons-and-fonts.md](docs/icons-and-fonts.md) — icon families, adding icons, vendored fonts

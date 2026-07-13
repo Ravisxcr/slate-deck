@@ -169,7 +169,7 @@
   ]
 }
 
-#let _code-slide(kicker: none, kicker-icon: none, title: none, code: none, lang: "typ", theme: "dark", progress: none) = context {
+#let _code-slide(kicker: none, kicker-icon: none, title: none, code: none, lang: none, theme: "dark", highlight: (), progress: none) = context {
   let t = typeset-theme.get()
   let is-light = theme == "light"
   let bg = if is-light { t.paper } else { t.navy }
@@ -196,7 +196,7 @@
         #text(font: fonts.display, weight: 700, size: 30pt, fill: title-fill)[#title]
         #v(spacing.xxl - spacing.xs)
       ]
-      #code-block(code, lang: lang, theme: theme)
+      #code-block(code, lang: lang, theme: theme, highlight: highlight)
     ]
     #_footer-progress(progress, footer-fill)
   ]
