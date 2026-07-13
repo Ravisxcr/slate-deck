@@ -1,18 +1,41 @@
 # typeset
 
 An opinionated Typst presentation package: strict grid, one accent color, and a small set of
-slide kinds and components that cover most corporate-update / dev-talk decks. See
-[CLAUDE.md](CLAUDE.md) for the design tokens and architecture behind it.
+slide kinds and components that cover most corporate-update / dev-talk decks. Every slide is
+declared with structured parameters — no absolute positioning, no hand-tuned CSS — so a deck reads
+like a spec and rebrands with a one-line config change. See [CLAUDE.md](CLAUDE.md) for the design
+tokens and architecture behind it.
 
 `examples/demo.typ` is the spec — one example of every slide kind, in mockup order.
 `examples/showcase.typ` goes further: components reused outside their default slide kind, `icon()`
 at arbitrary sizes, native Typst markup inside a content body, and a live mid-deck rebrand via
 theme state.
 
+## Gallery
+
+Rendered straight from `examples/demo.typ` — no design tool, no manual touch-up.
+
+| | |
+|---|---|
+| ![Title slide](examples/gallery/title.png) | ![Section divider](examples/gallery/section.png) |
+| **`title`** — cover slide, accent bar, kicker, byline | **`section`** — full-accent divider between deck sections |
+| ![Content slide](examples/gallery/content.png) | ![Compare slide](examples/gallery/compare.png) |
+| **`content`** — kicker, headline, numbered-grid body | **`compare`** — two-column cards, recommended option highlighted |
+| ![Stat slide](examples/gallery/stat.png) | ![Code slide](examples/gallery/code.png) |
+| **`stat`** — navy background, oversized hero number | **`code`** — line-numbered, syntax-colored code block |
+| ![Diagram slide](examples/gallery/diagram.png) | ![Closing slide](examples/gallery/closing.png) |
+| **`diagram`** — manual-placement node/edge architecture diagram | **`closing`** — mirrors `title` on accent background |
+
 ## Install
 
 ```powershell
-./scripts/install.ps1
+./install.ps1
+```
+
+or, on macOS/Linux:
+
+```sh
+./install.sh
 ```
 
 Copies this package into `%LOCALAPPDATA%\typst\packages\local\typeset\0.1.0\`. Re-run it after
@@ -105,8 +128,8 @@ Usable directly inside a `content`-kind slide body:
 
 ## Icons
 
-- Line icons: `assets/icons/line/*.svg`, a curated ~90-icon subset of
-  [Lucide](https://lucide.dev) (ISC license, see `assets/icons/line/LICENSE`).
+- Line icons: `assets/icons/line/*.svg`, the full [Lucide](https://lucide.dev) icon set (~1750
+  SVGs, ISC license, see `assets/icons/line/LICENSE`) — any Lucide name works out of the box.
 - Brand marks: `assets/icons/brand/*.svg`, from [Simple Icons](https://simpleicons.org) (CC0, see
   `assets/icons/brand/LICENSE.md`), recolored via `assets/icons/brand/colors.typ`.
 

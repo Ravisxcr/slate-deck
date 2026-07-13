@@ -18,4 +18,5 @@
   "postgresql": rgb("#4169E1"),
   "redis": rgb("#FF4438"),
   "graphql": rgb("#E10098"),
+  "googlecloud": rgb("#4285F4"),
 )
