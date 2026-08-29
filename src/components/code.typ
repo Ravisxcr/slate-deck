@@ -19,16 +19,77 @@
 // node (plus surrounding whitespace text), not a bare `raw` value -- unwrap it so code-block can
 // read `.text`/`.lang` off the actual raw node either way.
 #let _find-raw(body) = {
-  if body.func() == raw {
-    body
-  } else if body.has("children") {
-    let found = none
-    for child in body.children {
-      if found == none { found = _find-raw(child) }
+  if body == none {
+    none
+  } else if type(body) == str {
+    none
+  } else if type(body) == content {
+    if body.func() == raw {
+      body
+    } else if body.has("children") {
+      let found = none
+      for child in body.children {
+        if found == none { found = _find-raw(child) }
+      }
+      found
+    } else if body.has("body") {
+      _find-raw(body.body)
+    } else {
+      none
     }
-    found
   } else {
     none
+  }
+}
+
+#let _extract-text(body) = {
+  if body == none {
+    ""
+  } else if type(body) == str {
+    body
+  } else if type(body) == content {
+    if body.has("text") {
+      body.text
+    } else if body.has("children") {
+      body.children.map(_extract-text).join("")
+    } else if body.has("body") {
+      _extract-text(body.body)
+    } else {
+      ""
+    }
+  } else {
+    repr(body)
+  }
+}
+
+#let _is-ident(s) = {
+  s.len() > 0 and s.clusters().all(c => (
+    (c >= "a" and c <= "z") or 
+    (c >= "A" and c <= "Z") or 
+    (c >= "0" and c <= "9") or 
+    c in ("_", "-", "+", "#")
+  ))
+}
+
+#let _parse-raw-node(raw-node, lang-override) = {
+  let text = raw-node.text
+  let node-lang = raw-node.at("lang", default: none)
+  if node-lang != none {
+    let resolved = if lang-override != none { lang-override } else { node-lang }
+    (text, resolved)
+  } else {
+    // When inline raw block fence contains a language header (e.g. ```js\n...\n``` inside brackets),
+    // Typst may store the language on line 1 of .text instead of in .lang
+    let lines = text.split("\n")
+    if lines.len() > 1 and _is-ident(lines.at(0).trim()) {
+      let inferred-lang = lines.at(0).trim()
+      let rest-text = lines.slice(1).join("\n")
+      let resolved = if lang-override != none { lang-override } else { inferred-lang }
+      (rest-text, resolved)
+    } else {
+      let resolved = if lang-override != none { lang-override } else { "typ" }
+      (text, resolved)
+    }
   }
 }
 
@@ -39,12 +100,24 @@
 // accent color; each line is still rendered as its own `raw` (single-line highlighter, matching
 // the mockup's hand-styled spans) rather than a full multi-line syntax highlight pass.
 #let code-block(
-  body, 
+  body: none,
+  code: none,
   lang: none, 
   numbers: true, 
-  theme: "dark", 
-  highlight: ()
+  theme: "light", 
+  highlight: (),
+  ..rest,
 ) = context {
+  let actual-body = if body != none {
+    body
+  } else if code != none {
+    code
+  } else if rest.pos().len() > 0 {
+    rest.pos().at(0)
+  } else {
+    ""
+  }
+
   let t = typeset-theme.get()
   let is-light = theme == "light"
   let pick(light, dark) = if is-light { light } else { dark }
@@ -54,11 +127,13 @@
   let number-fill = pick(t.ink-faint, t.on-navy-muted.transparentize(35%))
   let highlight-fill = pick(t.accent-soft, t.accent.transparentize(85%))
 
-  let (text-content, resolved-lang) = if type(body) == str {
-    (body, if lang != none { lang } else { "typ" })
+  let raw-node = _find-raw(actual-body)
+  let (text-content, resolved-lang) = if type(actual-body) == str {
+    (actual-body, if lang != none { lang } else { "typ" })
+  } else if raw-node != none {
+    _parse-raw-node(raw-node, lang)
   } else {
-    let raw-node = _find-raw(body)
-    (raw-node.text, if lang != none { lang } else { raw-node.at("lang", default: "typ") })
+    (_extract-text(actual-body), if lang != none { lang } else { "typ" })
   }
   let lines = text-content.trim("\n").split("\n")
   let highlighted = expand-highlight(highlight)

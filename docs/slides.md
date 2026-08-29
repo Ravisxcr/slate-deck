@@ -160,7 +160,7 @@ A structured two-column comparison layout. Each column is rendered as a clean bo
 
 ![Stat Slide](assets/gallery/stat.png)
 
-A high-contrast, dark navy slide featuring an oversized hero number (170pt display font) paired with a bold caption and optional explanatory footnote.
+A high-impact metric slide featuring an oversized hero number (170pt display font) paired with a bold caption and optional explanatory footnote.
 
 ### Parameters
 
@@ -168,7 +168,10 @@ A high-contrast, dark navy slide featuring an oversized hero number (170pt displ
 |---|---|---|---|---|
 | `value` | `content` | `none` | **Yes** | Large metric value or key stat (e.g. `[6x]`, `[99.9%]`, `[45ms]`). |
 | `caption` | `content` | `none` | **Yes** | Bold description rendered directly adjacent to the number. |
-| `kicker` | `content` | `none` | Optional | Accent-tinted mono kicker at the top. |
+| `kicker` | `content` | `none` | Optional | Top mono label. |
+| `kicker-icon` | `string` | `none` | Optional | Lucide icon name for kicker. |
+| `theme` | `string` | `"light"` | Optional | Color scheme: `"light"` (paper), `"dark"` (navy), or `"accent"`. |
+| `fill` | `color` | `none` | Optional | Custom background fill color override. |
 | `note` | `content` | `none` | Optional | Footnote or source citation anchored at the bottom-left. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
@@ -235,7 +238,7 @@ A dedicated slide for presenting syntax-highlighted source code with line number
 | `kicker` | `content` | `none` | Optional | Top mono label. |
 | `kicker-icon` | `string` | `none` | Optional | Lucide icon name for kicker (e.g. `"terminal"`, `"code"`). |
 | `lang` | `string` | `none` | Optional | Language identifier for syntax highlighting (e.g. `"js"`, `"rust"`, `"python"`, `"typ"`). |
-| `theme` | `string` | `"dark"` | Optional | Code block color scheme: `"dark"` (navy backdrop) or `"light"` (paper backdrop). |
+| `theme` | `string` | `"light"` | Optional | Code block color scheme: `"light"` (paper backdrop) or `"dark"` (navy backdrop). |
 | `highlight` | `array` | `()` | Optional | Array of line numbers or inclusive ranges to highlight, e.g. `(3, (5, 7))`. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 

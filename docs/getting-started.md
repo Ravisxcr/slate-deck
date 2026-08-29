@@ -128,27 +128,50 @@ typst watch my-deck.typ my-deck.pdf
 
 ## 4. Core Concepts for Slide Authors
 
-### 1. The `#show: deck.with(...)` Rule
-Always place `#show: deck.with(...)` at the very top of your document. It configures:
-- The 16:9 widescreen dimensions (960pt × 540pt).
-- Default document metadata (`title`, `author`).
-- The global OKLCH color palette derived from your `accent-hue`.
-- Base typography styles and zero-margin slide boundaries.
+### 1. Global Deck Configuration (`#show: deck.with(...)`)
+
+Always place the `#show: deck.with(...)` rule at the very top of your document. It initializes the presentation engine, sets up 16:9 widescreen dimensions (960pt × 540pt), embeds PDF metadata, zeroes unsafe default margins, and derives the complete OKLCH theme palette from your chosen accent hue.
+
+```typst
+#import "@local/slatedeck:0.1.0": *
+
+#show: deck.with(
+  title: "MongoDB Deep Dive",
+  author: "Ravi",
+  accent-hue: 140deg,   // Emerald / Forest green accent
+  accent-chroma: 0.16,  // Optional saturation override (default: 0.16)
+)
+```
+
+#### Global Configuration Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string` | `none` | Presentation title embedded into PDF metadata (`document.title`). |
+| `author` | `string` | `none` | Author / team name embedded into PDF metadata (`document.author`). |
+| `accent-hue` | `angle` | `250deg` | Base hue angle in degrees for the deck's primary accent color. |
+| `accent-chroma` | `float` | `0.16` | Perceptual chroma / saturation intensity of the accent color in OKLCH space. |
+
+#### Popular Brand Hue Presets
+
+| Accent Hue | Tone / Identity | Recommended For |
+|---|---|---|
+| `140deg` – `145deg` | **Forest / Emerald Green** | MongoDB, Node.js, Spring, FinTech & Growth talks |
+| `215deg` | **Cloud Electric Blue** | Cloud architecture, Kubernetes, AWS/GCP/Azure |
+| `250deg` | **Royal Indigo / Violet** *(Default)* | Developer platforms, systems engineering |
+| `30deg` | **Warm Amber / Coral** | Product demos, design systems, consumer pitches |
+| `345deg` | **Crimson Rose** | Executive updates, security incident response |
 
 ### 2. The `#slide(...)` Function
 Every slide in your presentation is created with a single call to `#slide(...)`. 
-- Pass `kind:` to choose one of the 11 built-in layouts (e.g. `kind: "title"`, `kind: "stat"`, `kind: "code"`).
+- Pass `kind:` to choose one of the 11 built-in layouts (e.g. `kind: "title"`, `kind: "stat"`, `kind: "code"`, `kind: "diagram"`).
 - If `kind:` is omitted, it defaults to `"content"`, which accepts a kicker, headline title, and a freeform body block `[ ... ]`.
 
-### 3. One-Line Instant Rebranding
-You can change the accent personality of your entire presentation by tweaking `accent-hue`:
+### 3. Dynamic Mid-Deck Rebranding
+In addition to the global `#show: deck.with(...)` rule, you can dynamically update the theme state at any point in your deck using `#typeset-theme.update(...)`:
 
 ```typst
-#show: deck.with(
-  title: "Product Launch",
-  accent-hue: 145deg,   // Forest Green
-  accent-chroma: 0.16,  // Optional saturation override (default: 0.16)
-)
+#typeset-theme.update(make-theme(accent-hue: 15deg))
 ```
 
 ---

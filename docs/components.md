@@ -213,7 +213,7 @@ Displays an oversized metric value (170pt display font) paired with an adjacent 
 
 ### Signature
 ```typst
-#stat-hero(value, caption, on: "navy")
+#stat-hero(value, caption, on: "paper")
 ```
 
 ### Parameters
@@ -222,7 +222,7 @@ Displays an oversized metric value (170pt display font) paired with an adjacent 
 |---|---|---|---|
 | `value` | `content` | *Positional* | Big number or metric (e.g. `[10x]`, `[99.99%]`). |
 | `caption` | `content` | *Positional* | Bold accompanying description text. |
-| `on` | `string` | `"navy"` | Background mode: `"navy"` (light text) or `"paper"` (dark text). |
+| `on` | `string` | `"paper"` | Background mode: `"paper"` (dark text), `"navy"` / `"dark"` (light text), or `"accent"`. |
 
 ### Example
 
@@ -269,7 +269,7 @@ A line-numbered, syntax-highlighted code container with row highlighting and the
 
 ### Signature
 ```typst
-#code-block(body, lang: none, numbers: true, theme: "dark", highlight: ())
+#code-block(body, lang: none, numbers: true, theme: "light", highlight: ())
 ```
 
 ### Parameters
@@ -279,7 +279,7 @@ A line-numbered, syntax-highlighted code container with row highlighting and the
 | `body` | `string` or `raw` | *Positional* | Source code string or raw block ` ```lang ... ``` `. |
 | `lang` | `string` | `none` | Language syntax identifier (e.g. `"typ"`, `"rust"`, `"python"`, `"json"`). |
 | `numbers` | `bool` | `true` | When `true`, displays 1-indexed line numbers in the gutter. |
-| `theme` | `string` | `"dark"` | Color scheme: `"dark"` (navy container) or `"light"` (paper container). |
+| `theme` | `string` | `"light"` | Color scheme: `"light"` (paper container) or `"dark"` (navy container). |
 | `highlight` | `array` | `()` | Line numbers or inclusive tuples to tint with accent color, e.g. `(2, (4, 6))`. |
 
 ### Example

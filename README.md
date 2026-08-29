@@ -17,7 +17,7 @@ Rendered natively with Typst using the SlateDeck public API:
 | ![Content Slide](examples/gallery/content.png) | ![Compare Slide](examples/gallery/compare.png) |
 | **`content`** — Structured body with numbered cards or grids | **`compare`** — 2-column comparison with recommended highlight |
 | ![Stat Slide](examples/gallery/stat.png) | ![Code Slide](examples/gallery/code.png) |
-| **`stat`** — Dark navy backdrop with oversized hero metric | **`code`** — Line-numbered syntax-highlighted code block |
+| **`stat`** — Oversized hero metric with adjacent description | **`code`** — Line-numbered syntax-highlighted code block |
 | ![Diagram Slide](examples/gallery/diagram.png) | ![Closing Slide](examples/gallery/closing.png) |
 | **`diagram`** — Manual-placement architecture & ER diagram | **`closing`** — Matching accent-colored outro & contact slide |
 

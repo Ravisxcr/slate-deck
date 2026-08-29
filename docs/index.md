@@ -41,7 +41,7 @@ Every slide below is rendered natively by Typst using the SlateDeck public API:
 | ![Content Slide](assets/gallery/mongodb-content.png) | ![Comparison Slide](assets/gallery/mongodb-compare.png) |
 | **`content`** — Freeform body with multi-column grids and code blocks | **`compare`** — 2-column feature comparison with recommended highlight |
 | ![Code Slide](assets/gallery/mongodb-code.png) | ![Stat Slide](assets/gallery/mongodb-stat.png) |
-| **`code`** — Line-numbered syntax-highlighted code block with focus tints | **`stat`** — Dark navy backdrop with oversized hero metric |
+| **`code`** — Line-numbered syntax-highlighted code block with focus tints | **`stat`** — Oversized hero metric with adjacent description |
 | ![Brand Marks](assets/gallery/showcase-brand-icons.png) | ![Card Reuse](assets/gallery/showcase-compare-reuse.png) |
 | **`icon(brand: true)`** — Full-color developer and cloud logos | **Component Reuse** — Modular cards composed into custom 3-column grids |
 | ![Live Rebrand](assets/gallery/showcase-rebrand-stat.png) | ![Closing Slide](assets/gallery/mongodb-closing.png) |

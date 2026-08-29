@@ -12,11 +12,21 @@ Instead of editing dozens of hex colors across individual slides, SlateDeck gene
 
 ```typst
 #show: deck.with(
-  title: "Quarterly Roadmap",
-  accent-hue: 250deg,   // Royal Violet / Indigo (default)
+  title: "MongoDB Architecture",
+  author: "Ravi",
+  accent-hue: 140deg,   // Forest / Emerald Green
   accent-chroma: 0.16,  // Accent saturation level (default: 0.16)
 )
 ```
+
+### Configuration Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string` | `none` | Document title for PDF export metadata (`document.title`). |
+| `author` | `string` | `none` | Author / organization for PDF metadata (`document.author`). |
+| `accent-hue` | `angle` | `250deg` | Base hue angle generating all accent and tinted color tokens. |
+| `accent-chroma` | `float` | `0.16` | Perceptual chroma / saturation intensity of the accent color. |
 
 ### Popular Brand Hue Presets
 
