@@ -1,169 +1,254 @@
-# diagram()
+# Architecture & Flow Diagrams
 
-![Diagram slide](assets/gallery/diagram.png)
+![Diagram Slide](assets/gallery/diagram.png)
 
-Source: `src/components/diagram.typ`. A manual-placement node/edge diagram primitive for
-architecture diagrams, flowcharts, and ER diagrams. Backs the `diagram` slide kind
-(`slide.typ`'s `_diagram-slide`) but is directly callable inside any `content` slide body too —
-`examples/demo.typ` does both (see the request-path example using `kind: "diagram"`, and the
-flowchart/ER examples calling `diagram()` inline).
+SlateDeck includes a built-in, code-native **diagramming engine** (`diagram()`) for rendering cloud system architectures, database ER diagrams, and workflow flowcharts directly inside your slides.
 
-**Deliberately no auto-layout.** There is no graph solver, no force-directed placement, no
-automatic node arrangement. You place every node explicitly on a `(col:, row:)` grid, the same
-way you'd place boxes on a whiteboard. This is a scope decision, not a missing feature — see
-[index.md](index.md#design-philosophy-why-some-things-are-the-way-they-are). What *is*
-automatic is edge routing around other nodes (below).
+Unlike external diagramming tools that generate static bitmaps, SlateDeck diagrams are authored in pure Typst: they inherit your presentation's color palette, crisp vector typography, and one-line rebrand system.
+
+---
+
+## 1. Quick Example
+
+```typst
+#slide(
+  kind: "diagram",
+  title: [Serverless Microservices Architecture],
+  cols: 3,
+  rows: 2,
+  theme: "dark",
+  nodes: (
+    (id: "client", pos: (col: 0, row: 0), icon: "globe",   label: [Web Client]),
+    (id: "api",    pos: (col: 1, row: 0), icon: "server",  label: [API Gateway]),
+    (id: "worker", pos: (col: 1, row: 1), icon: "cpu",     label: [Async Worker]),
+    (id: "db",     pos: (col: 2, row: 0), icon: "database",label: [PostgreSQL], accent: true),
+    (id: "queue",  pos: (col: 2, row: 1), icon: "layers",  label: [SQS Queue]),
+  ),
+  edges: (
+    (from: "client", to: "api"),
+    (from: "api",    to: "db",    label: [query]),
+    (from: "api",    to: "queue", label: [enqueue], style: "dashed"),
+    (from: "queue",  to: "worker",label: [process]),
+  ),
+)
+```
+
+---
+
+## 2. The Grid Mental Model
+
+Diagrams in SlateDeck are arranged on an explicit **column-row grid** (0-indexed):
+
+```
+       col: 0          col: 1          col: 2
+row: 0 [ (0, 0) ] ---- [ (1, 0) ] ---- [ (2, 0) ]
+           |               |
+row: 1 [ (0, 1) ] ---- [ (1, 1) ] ---- [ (2, 1) ]
+```
+
+- You define the grid size with `cols: N` and `rows: N`.
+- You position every node using `pos: (col: X, row: Y)`.
+- The engine automatically calculates canvas boundaries and routes connecting arrows between nodes.
+
+---
+
+## 3. Diagram Function Signature
 
 ```typst
 #diagram(
-  (
-    (id: "cdn", pos: (col: 0, row: 0), icon: "globe", label: [CloudFront]),
-    (id: "api", pos: (col: 1, row: 0), icon: "server", label: [API Gateway]),
-    (id: "db", pos: (col: 1, row: 1), icon: "database", label: [DynamoDB], accent: true),
-  ),
-  edges: (
-    (from: "cdn", to: "api"),
-    (from: "api", to: "db", label: [write]),
-  ),
-  cols: 2,
-  rows: 2,
-  theme: "dark",
+  nodes,                                                // Positional: Array of node definitions
+  edges: (),                                            // Array of connector definitions
+  cols: 3,                                              // Total grid columns
+  rows: 2,                                              // Total grid rows
+  cell: (width: 150pt, height: 80pt),                   // Dimensions of a single grid cell
+  gutter: (x: 56pt, y: 34pt),                           // Horizontal and vertical cell gaps
+  table-style: (header-height: 22pt, row-height: 18pt), // Shared geometry for schema tables
+  theme: "light",                                       // "light" | "dark"
 )
 ```
 
-## Signature
+---
 
-```typst
-diagram(
-  nodes,                                          // positional: array of node dicts
-  edges: (),                                       // array of edge dicts
-  cols: 3, rows: 2,                                 // canvas grid dimensions
-  cell: (width: 150pt, height: 80pt),                // per-cell box size
-  gutter: (x: spacing.xl, y: spacing.lg),             // gap between cells
-  table-style: (header-height: 22pt, row-height: 18pt), // shared with er-table()
-  theme: "light",                                        // "light" | "dark"
-)
-```
+## 4. Defining Nodes
 
-## Nodes
+SlateDeck supports two node kinds: **Box Nodes** (`kind: "box"`, default) and **Schema Table Nodes** (`kind: "table"`).
 
-Two kinds, selected by `kind: "box"` (default) or `kind: "table"`.
+### 1. Box Nodes (`kind: "box"`)
 
-### Box nodes
-
-```typst
-(id: "fn", pos: (col: 2, row: 0), icon: "boxes", label: [Lambda])
-```
-
-| field | required | notes |
-|---|---|---|
-| `id` | yes | string, referenced by edges |
-| `pos` | yes | `(col:, row:)`, 0-indexed |
-| `label` | yes | content |
-| `icon` | no | Lucide name (or brand name with `icon-brand: true`) |
-| `icon-layout` | no | `"top"` (default, icon above label) or `"left"` (icon beside label) |
-| `icon-brand` | no | bool, passed through to `icon(..., brand: ...)` |
-| `icon-color` | no | override icon color |
-| `accent` | no | bool — accent border + `accent-soft` fill, for highlighting one node |
-| `span` | no | `(colspan:, rowspan:)` — grow the box across multiple cells |
-
-### Table nodes
+Standard boxes for microservices, cloud resources, functions, or workflow steps.
 
 ```typst
 (
-  id: "customers", pos: (col: 0, row: 0), kind: "table",
-  name: "customers",
+  id: "auth-svc",
+  pos: (col: 1, row: 0),
+  label: [Auth Service],
+  icon: "shield-check",
+  icon-layout: "top",
+  accent: true,
+)
+```
+
+| Field | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `id` | `string` | — | **Yes** | Unique node identifier referenced by edge connectors. |
+| `pos` | `dictionary` | — | **Yes** | Grid position: `(col: int, row: int)` (0-indexed). |
+| `label` | `content` | — | **Yes** | Text label displayed inside the box. |
+| `icon` | `string` | `none` | Optional | Name of a Lucide line icon or brand logo. |
+| `icon-layout` | `string` | `"top"` | Optional | Icon placement: `"top"` (icon centered above label) or `"left"` (icon beside label). |
+| `icon-brand` | `bool` | `false` | Optional | When `true`, loads the official full-color brand mark. |
+| `icon-color` | `color` | `none` | Optional | Color override for the icon. |
+| `accent` | `bool` | `false` | Optional | Highlights the node with an accent border and soft accent fill. |
+| `span` | `dictionary` | `(colspan: 1, rowspan: 1)` | Optional | Multi-cell expansion: `(colspan: int, rowspan: int)`. |
+
+### 2. Schema Table Nodes (`kind: "table"`)
+
+Renders a complete database / ER schema table directly on the diagram canvas.
+
+```typst
+(
+  id: "users-table",
+  kind: "table",
+  pos: (col: 0, row: 0),
+  name: "users",
+  accent: true,
   columns: (
-    (name: "id", type: "uuid", key: "pk"),
-    (name: "email", type: "text"),
+    (name: "id",         type: "uuid",      key: "pk"),
+    (name: "email",      type: "varchar"),
+    (name: "created_at", type: "timestamp"),
   ),
 )
 ```
 
-Delegates to [`er-table()`](components.md#er-tablename-columns-width-220pt-height-auto-header-height-22pt-row-height-18pt-accent-false),
-passed a fixed pixel `width`/`height` computed from the node's grid cell so the table's own
-internal row math (`header-height + row * row-height`) always matches the coordinates `diagram()`
-uses for row-anchor edges (see below). `accent: true` on the node passes through to `er-table`'s
-accent header treatment.
+| Field | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `id` | `string` | — | **Yes** | Node identifier referenced by edges. |
+| `kind` | `string` | `"box"` | **Yes** | Set to `"table"` for schema tables. |
+| `pos` | `dictionary` | — | **Yes** | Grid position `(col: int, row: int)`. |
+| `name` | `string` | — | **Yes** | Table name shown in the table header. |
+| `columns` | `array` | — | **Yes** | Array of column dictionaries: `((name:, type:, key:), ...)`. |
+| `accent` | `bool` | `false` | Optional | Highlights the table header in accent color. |
 
-## Edges
+---
 
-```typst
-(from: "fn", to: "cache", style: "dashed", arrow: "both", label: [cache])
-```
+## 5. Defining Edges & Connectors
 
-| field | required | notes |
-|---|---|---|
-| `from`, `to` | yes | node id string, or `(id:, row:)` for a row anchor into a table node |
-| `arrow` | no | `"end"` (default), `"both"`, or `"none"` |
-| `style` | no | `"solid"` (default) or `"dashed"` |
-| `color` | no | override line color (default `ink-faint`) |
-| `bend` | no | `"auto"` (default), `"h-then-v"`, or `"v-then-h"` — see routing below |
-| `label` | no | content, placed at the longest segment's midpoint with a background-matched pill |
-| `label-offset` | no | `(dx:, dy:)` nudge for the label |
-
-### Row anchors
-
-`(id: "orders", row: 1)` targets a zero-height horizontal slice at that row's vertical center
-inside a `kind: "table"` node — the classic ER-diagram "line points at this specific column, not
-the whole table" anchor.
+Edges connect nodes with straight lines or right-angle elbow connectors.
 
 ```typst
-edges: ((from: (id: "orders", row: 1), to: (id: "customers", row: 0), label: [FK]),)
+(
+  from: "auth-svc",
+  to: "database",
+  arrow: "end",
+  style: "solid",
+  label: [verify],
+)
 ```
 
-## Edge routing
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `from` | `string` or `dict` | *Required* | Source node ID string, or `(id: "table_id", row: int)` for row anchors. |
+| `to` | `string` or `dict` | *Required* | Target node ID string, or `(id: "table_id", row: int)` for row anchors. |
+| `arrow` | `string` | `"end"` | Arrowheads: `"end"` (pointing forward), `"both"`, or `"none"`. |
+| `style` | `string` | `"solid"` | Connector style: `"solid"` or `"dashed"`. |
+| `color` | `color` | `none` | Custom stroke color (defaults to `theme.ink-faint`). |
+| `bend` | `string` | `"auto"` | Elbow mode: `"auto"`, `"h-then-v"`, or `"v-then-h"`. |
+| `label` | `content` | `none` | Text pill label placed at the connector's midpoint. |
+| `label-offset` | `dict` | `(dx: 0pt, dy: 0pt)` | Fine-tuning offset for the label position. |
 
-Three route shapes, chosen by node geometry (`_route()`):
+### Row-Level Table Anchors
 
-1. **Straight line** — nodes share a row or column; clipped to box edges, not centers.
-2. **2-segment elbow** — nodes don't share a row/column and neither endpoint is a row anchor.
-   `bend: "auto"` picks `h-then-v` or `v-then-h` based on which axis has the larger gap; you can
-   force either explicitly.
-3. **"Z" route** — one endpoint is a row anchor (zero height). A center-based elbow would bend at
-   the target's center-x, landing *inside* the table box and hiding under it, so row anchors
-   instead exit the source's facing edge, jog vertically at a midpoint, and enter the target's
-   facing edge laterally.
+For Entity-Relationship (ER) diagrams, you can anchor connectors directly to specific database table rows (columns) instead of the whole box:
 
-### Obstacle avoidance is a bounded search, not pathfinding
-
-Every other node on the canvas is a potential obstacle for a given edge (source/target's own boxes
-are excluded). `_elbow-route`/`_z-route` first try the default route; if it crosses an obstacle
-box (inflated by a 4pt clearance), they try a small fixed number of alternates
-(`_route-max-tries = 5`, stepping the bend coordinate `_route-step = 14pt` at a time, both
-directions) and take the first collision-free one. If none of those clear either, it falls back to
-the original unrouted default rather than searching further.
-
-This resolves *most* third-node crossings automatically, but it is explicitly not a general
-solver — a same-row/same-column straight connector never detours around an obstacle at all (see
-`_route()`'s straight-line branches, which skip obstacle checking entirely), and a very congested
-cell can exhaust the bounded search. If a specific edge still visually crosses a node:
-
-- Leave a routing "lane" — an empty row or column between the nodes the edge needs to clear.
-- Or pick `bend: "h-then-v"` / `"v-then-h"` explicitly to force a different corner than
-  `"auto"` would choose.
-
-## Coordinate math
-
-`_node-positions()` computes every node's absolute canvas position by pure arithmetic off
-`(col, row)` — no measurement, no iterative layout:
-
-```
-x0 = col * (cell.width + gutter.x)
-y0 = row * (cell.height + gutter.y)
-w  = colspan * cell.width + (colspan - 1) * gutter.x
-h  = rowspan * cell.height + (rowspan - 1) * gutter.y
+```typst
+edges: (
+  // Connects row 1 ("user_id") of orders to row 0 ("id") of users:
+  (from: (id: "orders", row: 1), to: (id: "users", row: 0), label: [FK]),
+)
 ```
 
-The whole diagram is then wrapped in a fixed-size `box(width: canvas-w, height: canvas-h, ...)`
-where `canvas-w`/`canvas-h` are `cols`/`rows` times cell+gutter — so `cols:`/`rows:` must match
-the actual extent of your `pos` values (including any `span`) or nodes will render outside the
-box's nominal bounds (they'll still draw — Typst doesn't clip a `stack` — but the box's own
-reported size will undercount).
+---
 
-## Theming
+## 6. Real-World Examples
 
-`theme: "light"` (paper background, `border`-colored box strokes) or `"dark"` (navy background,
-`on-navy-muted`-transparentized strokes) picks every node/edge default color via the theme state,
-same as every other component — see [design-tokens.md](design-tokens.md). Per-node/edge
-`accent`/`color` overrides layer on top of that base.
+### Example A: Cloud Architecture (Dark Theme)
+
+```typst
+#slide(
+  kind: "diagram",
+  kicker: [Infrastructure],
+  title: [Multi-Tier Ingestion Pipeline],
+  cols: 3,
+  rows: 2,
+  theme: "dark",
+  nodes: (
+    (id: "dns",    pos: (col: 0, row: 0), icon: "globe",        label: [Route53 DNS]),
+    (id: "lb",     pos: (col: 1, row: 0), icon: "server",       label: [Network ALB]),
+    (id: "app",    pos: (col: 2, row: 0), icon: "cpu",          label: [ECS Cluster]),
+    (id: "cache",  pos: (col: 1, row: 1), icon: "zap",          label: [Redis Cache]),
+    (id: "db",     pos: (col: 2, row: 1), icon: "database",     label: [PostgreSQL], accent: true),
+  ),
+  edges: (
+    (from: "dns",   to: "lb"),
+    (from: "lb",    to: "app",   label: [proxy]),
+    (from: "app",   to: "cache", label: [get / set], style: "dashed", bend: "v-then-h"),
+    (from: "app",   to: "db",    label: [persist]),
+  ),
+)
+```
+
+### Example B: Database ER Schema (Light Theme)
+
+```typst
+#slide(
+  kind: "diagram",
+  kicker: [Data Architecture],
+  title: [Normalized Schema with Foreign Keys],
+  cols: 2,
+  rows: 1,
+  theme: "light",
+  cell: (width: 220pt, height: 160pt),
+  gutter: (x: 80pt, y: 34pt),
+  nodes: (
+    (
+      id: "users",
+      kind: "table",
+      pos: (col: 0, row: 0),
+      name: "users",
+      columns: (
+        (name: "id",         type: "uuid",      key: "pk"),
+        (name: "email",      type: "varchar"),
+        (name: "team_id",    type: "uuid",      key: "fk"),
+        (name: "created_at", type: "timestamp"),
+      ),
+      accent: true,
+    ),
+    (
+      id: "orders",
+      kind: "table",
+      pos: (col: 1, row: 0),
+      name: "orders",
+      columns: (
+        (name: "id",         type: "uuid",      key: "pk"),
+        (name: "user_id",    type: "uuid",      key: "fk"),
+        (name: "amount",     type: "numeric"),
+        (name: "status",     type: "varchar"),
+      ),
+    ),
+  ),
+  edges: (
+    (from: (id: "orders", row: 1), to: (id: "users", row: 0), label: [FK: user_id]),
+  ),
+)
+```
+
+---
+
+## 7. Troubleshooting & Layout Tips
+
+> [!TIP]
+> **Routing Lanes**
+> If an elbow connector crosses through an intermediate node on a crowded diagram, add an empty column or row between them to serve as a clear routing lane.
+
+> [!NOTE]
+> **Using `diagram()` in `content` Slides**
+> You can also call `diagram()` directly inside any `#slide(kind: "content")[ ... ]` body if you want to place custom descriptive copy or a legend alongside the diagram.

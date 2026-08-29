@@ -1,6 +1,6 @@
 [project]
-site_name = "typeset"
-site_description = "An opinionated Typst presentation package: strict grid, one accent color, and a small set of slide kinds and components."
+site_name = "SlateDeck"
+site_description = "High-precision, opinionated Typst presentation framework: strict grid, automatic theming, and built-in architecture diagrams."
 docs_dir = "docs"
 
 # GitHub Pages serves this project at https://<owner>.github.io/<repo>/ (or a custom domain).
@@ -10,10 +10,10 @@ site_url = "https://ravisxcr.github.io/slate-deck/"
 nav = [
   {"Home" = "index.md"},
   {"Getting started" = "getting-started.md"},
-  {"Design tokens" = "design-tokens.md"},
-  {"Slides" = "slides.md"},
+  {"Slide Kinds" = "slides.md"},
   {"Components" = "components.md"},
-  {"Diagram" = "diagram.md"},
+  {"Diagrams" = "diagram.md"},
+  {"Design tokens" = "design-tokens.md"},
   {"Icons & fonts" = "icons-and-fonts.md"},
 ]
 

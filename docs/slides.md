@@ -1,228 +1,417 @@
-# Slides
+# Slide Kinds Reference
 
-Source: `src/slide.typ`. One dispatcher, `slide(kind: "...", ..)[body]`, that fans out to a
-private `_<kind>-slide()` function per kind. Unknown or omitted `kind` falls back to `"content"`.
-Every kind creates exactly one page (`page(fill: ...)`) with its own background — `deck()` itself
-emits no pages, so this is the only place page boundaries are decided.
+SlateDeck provides **11 built-in slide layouts** covering title slides, section dividers, structured content, code demonstrations, comparisons, metrics, quotes, team rosters, and architecture diagrams.
+
+Every slide is authored using the unified `#slide(...)` function:
 
 ```typst
-#slide(kind: "content", kicker: [...], title: [...])[
-  body content goes here
+#slide(
+  kind: "content", // Slide layout type (defaults to "content")
+  kicker: [Topic],
+  title: [Slide Title],
+  progress: [02 / 10], // Optional slide progress marker
+)[
+  // Body content (for "content" slides)
 ]
 ```
 
-Every kind except `title` and `closing` accepts `progress:` for a bottom-right "N / total"
-marker (`_footer-progress`, `slide.typ:11`).
+> [!NOTE]
+> **Progress Indicator**
+> Every slide kind (except `title` and `closing`) accepts the optional `progress:` parameter, rendering an elegant monospace progress counter in the bottom-right corner (e.g. `progress: [03 / 12]`).
 
-## `title`
+---
 
-![Title slide](assets/gallery/title.png)
+## 1. `title` — Cover Slide
 
-Cover slide: accent bar down the left edge, optional eyebrow (with icon), big display title,
-subtitle, byline row along the bottom.
+![Title Slide](assets/gallery/title.png)
 
-| param | type | notes |
-|---|---|---|
-| `eyebrow` | content | optional; rendered uppercase, mono, tracked |
-| `eyebrow-icon` | string | optional Lucide icon name, shown left of the eyebrow |
-| `title` | content | required in practice; `Archivo` 800 at `type-scale.display` |
-| `subtitle` | content | optional, muted, capped to 550pt width |
-| `byline` | array of content | e.g. `([Name], [Team], [Date])`, rendered as an evenly-gutted row |
+The primary presentation cover slide. Features a vertical accent bar on the left edge, an optional eyebrow label with icon, large display title, subtitle, and an evenly spaced byline row.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `title` | `content` | `none` | **Yes** | Main presentation title (rendered in large Archivo Display bold). |
+| `eyebrow` | `content` | `none` | Optional | Small uppercase mono label displayed above the title. |
+| `eyebrow-icon` | `string` | `none` | Optional | Name of a Lucide icon displayed adjacent to the eyebrow. |
+| `subtitle` | `content` | `none` | Optional | Descriptive subtitle copy in muted text color. |
+| `byline` | `array` | `()` | Optional | Array of metadata items displayed along the bottom, e.g. `([Author], [Team], [Date])`. |
+
+### Example
 
 ```typst
 #slide(
   kind: "title",
-  eyebrow: [typeset — presentation package],
+  eyebrow: [SlateDeck — Presentation Framework],
   eyebrow-icon: "terminal",
-  title: [Slides that read like a spec.],
-  subtitle: [A Typst template system for corporate updates and developer talks.],
+  title: [Slides That Read Like a Spec],
+  subtitle: [A structured Typst template system for corporate updates and developer talks.],
   byline: ([Jordan Reyes], [Platform Engineering], [Jul 2026]),
 )
 ```
 
-## `section`
+---
 
-![Section divider](assets/gallery/section.png)
+## 2. `section` — Chapter Divider
 
-Full accent-color divider between deck sections.
+![Section Divider](assets/gallery/section.png)
 
-| param | type | notes |
-|---|---|---|
-| `label` | content | optional eyebrow, e.g. `[Section 02]` |
-| `title` | content | display-sm weight 800, on-accent |
-| `blurb` | content | optional, bottom-left, capped to 600pt |
-| `progress` | content | e.g. `[02 / 10]` |
+A full-bleed slide filled with your deck's `accent` color. Used to introduce major agenda transitions and sections.
 
-## `content` (default)
+### Parameters
 
-![Content slide](assets/gallery/content.png)
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `title` | `content` | `none` | **Yes** | Chapter or section headline (rendered in high-contrast on-accent text). |
+| `label` | `content` | `none` | Optional | Upper-left kicker label, e.g. `[Section 02]`. |
+| `blurb` | `content` | `none` | Optional | Short paragraph describing the section's objectives. |
+| `progress` | `content` | `none` | Optional | Monospace slide marker, e.g. `[02 / 10]`. |
 
-Kicker + headline + free-form body. This is the workhorse kind — anything not covered by a more
-specific kind goes here, with the body built from `numbered-grid()`, `cols()`, or raw Typst
-markup.
-
-| param | type | notes |
-|---|---|---|
-| `kicker` | content | optional |
-| `title` | content | `h2` scale, weight 700 |
-| body | positional content block | anything — see [components.md](components.md) |
+### Example
 
 ```typst
-#slide(kicker: [Why this matters], title: [Three problems the old deck format created])[
+#slide(
+  kind: "section",
+  label: [Section 02],
+  title: [Architecture & Rollout Plan],
+  blurb: [Detailed migration phases, data layer isolation, and risk mitigation strategies.],
+  progress: [02 / 10],
+)
+```
+
+---
+
+## 3. `content` — General Purpose (Default)
+
+![Content Slide](assets/gallery/content.png)
+
+The primary workhorse slide layout. Provides a standardized kicker and headline header, leaving the remaining canvas available for any combination of components, grids, bullet lists, or raw Typst markup.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `body` | `content` | `[]` | **Yes** | Positional content block passed inside `[ ... ]`. |
+| `kicker` | `content` | `none` | Optional | Uppercase mono label above the headline in accent color. |
+| `title` | `content` | `none` | Optional | Primary slide headline (Archivo 34pt bold). |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Example
+
+```typst
+#slide(
+  kicker: [Design Principles],
+  title: [Three core improvements in the new pipeline],
+  progress: [03 / 10],
+)[
   #numbered-grid((
-    ([Inconsistent typography], [Every team hand-rolled fonts and spacing.]),
-    ([No code-native layout], [Snippets always broke indentation in slideware.]),
-  ))
+    ([Predictable Layouts], [No hand-crafted coordinate offsets or brittle CSS boxes.]),
+    ([Integrated Code Blocks], [Syntax highlighting and line numbers rendered natively.]),
+    ([Instant Rebranding], [Derive the entire color scheme from a single hue degree.]),
+  ), columns: 3)
 ]
 ```
 
-## `compare`
+---
 
-![Compare slide, from examples/mongodb.typ](assets/gallery/mongodb-compare.png)
+## 4. `compare` — Feature & Option Comparison
 
-Two-column card comparison; mark one side `recommended: true` for the accent-tinted treatment.
+![Compare Slide](assets/gallery/mongodb-compare.png)
 
-| param | type | notes |
-|---|---|---|
-| `kicker`, `title` | content | same as `content` |
-| `left`, `right` | dict | `(label:, title:, items:, recommended:)` — `items` is an array of content lines |
+A structured two-column comparison layout. Each column is rendered as a clean bordered card. Setting `recommended: true` on either card applies an accent border and soft accent fill to emphasize the preferred option.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `left` | `dictionary` | `none` | **Yes** | Left card definition: `(label:, title:, items:, recommended:)`. |
+| `right` | `dictionary` | `none` | **Yes** | Right card definition: `(label:, title:, items:, recommended:)`. |
+| `kicker` | `content` | `none` | Optional | Uppercase mono kicker label. |
+| `title` | `content` | `none` | Optional | Slide headline. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Card Dictionary Fields
+- `label`: Small uppercase card header (e.g. `[Option A]`).
+- `title`: Main card title (e.g. `[Self-Hosted Solution]`).
+- `items`: Array of content items rendered as bulletless feature lines.
+- `recommended`: Boolean (`true` / `false`). Toggles accent highlight styling.
+
+### Example
 
 ```typst
 #slide(
   kind: "compare",
-  kicker: [Data model tradeoffs],
-  title: [Documents vs. rows: what actually changes],
+  kicker: [Architecture Evaluation],
+  title: [Tradeoff Analysis: REST vs Event Streams],
   left: (
-    label: [Relational],
-    title: [Tables + foreign keys],
-    items: ([Fixed schema, enforced by the database], [Joins across normalized tables]),
+    label: [Synchronous REST],
+    title: [Direct HTTP Endpoints],
+    items: (
+      [Simple request-response semantics],
+      [Point-to-point coupling between services],
+      [Cascading latency under downstream load],
+    ),
   ),
   right: (
-    label: [MongoDB — when it fits],
-    title: [Documents + embedding],
-    items: ([Schema enforced by the app, or optionally by JSON Schema validators], [Related data embedded; joins via \$lookup when you need them]),
+    label: [Event-Driven (Recommended)],
+    title: [Kafka Event Streaming],
+    items: (
+      [Fully asynchronous and decoupled processing],
+      [Buffer spikes with durable message logs],
+      [Enables real-time analytics subscribers],
+    ),
     recommended: true,
   ),
+  progress: [04 / 10],
 )
 ```
 
-## `stat`
+---
 
-![Stat slide](assets/gallery/stat.png)
+## 5. `stat` — Key Metric Hero
 
-Navy background, oversized hero number (`type-scale.stat`, 170pt).
+![Stat Slide](assets/gallery/stat.png)
 
-| param | type | notes |
-|---|---|---|
-| `kicker` | content | on-navy-accent |
-| `value` | content | the big number/word, e.g. `[6x]` |
-| `caption` | content | sits beside the value, capped to 260pt |
-| `note` | content | optional footnote, bottom-left, capped to 500pt |
+A high-contrast, dark navy slide featuring an oversized hero number (170pt display font) paired with a bold caption and optional explanatory footnote.
 
-## `image`
+### Parameters
 
-![Image slide](assets/gallery/image.png)
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `value` | `content` | `none` | **Yes** | Large metric value or key stat (e.g. `[6x]`, `[99.9%]`, `[45ms]`). |
+| `caption` | `content` | `none` | **Yes** | Bold description rendered directly adjacent to the number. |
+| `kicker` | `content` | `none` | Optional | Accent-tinted mono kicker at the top. |
+| `note` | `content` | `none` | Optional | Footnote or source citation anchored at the bottom-left. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-Full-bleed image or placeholder with a pinned bottom-left caption bar (navy block over the image).
+### Example
 
-| param | type | notes |
-|---|---|---|
-| `image` | content | any content — an `image()` call or a placeholder `rect`/`box` |
-| `caption-title` | content | bold, in the caption bar |
-| `caption-body` | content | optional, muted, same bar |
+```typst
+#slide(
+  kind: "stat",
+  kicker: [Performance Benchmark],
+  value: [10x],
+  caption: [Faster query execution after columnar indexing],
+  note: [Measured across 50M records on standard cloud instances.],
+  progress: [05 / 10],
+)
+```
 
-## `code`
+---
 
-![Code slide, from examples/mongodb.typ](assets/gallery/mongodb-code.png)
+## 6. `code` — Syntax-Highlighted Code Showcase
 
-Navy (or `theme: "light"`) background, kicker+icon, headline, line-numbered syntax-colored code
-block. Delegates the block itself to `code-block()` — see [components.md](components.md) for the
-`highlight:`/`lang:` behavior.
+![Code Slide](assets/gallery/mongodb-code.png)
 
-| param | type | notes |
-|---|---|---|
-| `kicker`, `kicker-icon` | content / string | optional |
-| `title` | content | literal 30pt (one-off, not a named token) |
-| `code` | string or `raw` block | see `code-block()` |
-| `lang` | string | overrides a `raw` block's own fence language |
-| `theme` | `"dark"` (default) or `"light"` | flips background + all text/border colors |
-| `highlight` | array | line numbers / inclusive ranges to tint, e.g. `(3, (5, 7))` |
+A dedicated slide for presenting syntax-highlighted source code with line numbers, custom language tagging, and accent line highlights.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `code` | `string` or `raw` | `none` | **Yes** | Source code text or raw block ` ```lang ... ``` `. |
+| `title` | `content` | `none` | Optional | Slide headline. |
+| `kicker` | `content` | `none` | Optional | Top mono label. |
+| `kicker-icon` | `string` | `none` | Optional | Lucide icon name for kicker (e.g. `"terminal"`, `"code"`). |
+| `lang` | `string` | `none` | Optional | Language identifier for syntax highlighting (e.g. `"js"`, `"rust"`, `"python"`, `"typ"`). |
+| `theme` | `string` | `"dark"` | Optional | Code block color scheme: `"dark"` (navy backdrop) or `"light"` (paper backdrop). |
+| `highlight` | `array` | `()` | Optional | Array of line numbers or inclusive ranges to highlight, e.g. `(3, (5, 7))`. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Example
 
 ```typst
 #slide(
   kind: "code",
-  kicker: [Querying],
-  kicker-icon: "terminal",
-  title: [The aggregation pipeline: filter, reshape, group — in one call],
+  kicker: [Data Pipeline],
+  kicker-icon: "database",
+  title: [Aggregation Pipeline: Filter & Transform],
   lang: "js",
-  code: "db.orders.aggregate([\n  { \$match: { status: \"paid\" } },\n  { \$group: {\n      _id: \"\$customerId\",\n      total: { \$sum: \"\$amount\" }\n  }},\n  { \$sort: { total: -1 } },\n  { \$limit: 10 }\n])",
+  highlight: (2, (4, 6)),
+  code: ```js
+  db.orders.aggregate([
+    { $match: { status: "completed", year: 2026 } },
+    { $group: {
+        _id: "$region",
+        totalRevenue: { $sum: "$amount" },
+        orderCount: { $count: {} }
+    }},
+    { $sort: { totalRevenue: -1 } }
+  ])
+  ```,
+  progress: [06 / 10],
 )
 ```
 
-## `diagram`
+---
 
-![Diagram slide](assets/gallery/diagram.png)
+## 7. `diagram` — System Architecture Canvas
 
-Navy/light background, kicker+icon, headline, then a centered `diagram()` call. See
-[diagram.md](diagram.md) for the full node/edge/routing reference — this slide kind is a thin
-wrapper that just forwards `nodes`, `edges`, `cols`, `rows`, `cell`, `gutter`, `table-style`,
-`theme` straight to the component.
+![Diagram Slide](assets/gallery/diagram.png)
 
-| param | type | notes |
-|---|---|---|
-| `kicker`, `kicker-icon` | content / string | optional |
-| `title` | content | literal 30pt |
-| `nodes`, `edges`, `cols`, `rows`, `cell`, `gutter`, `table-style`, `theme` | — | forwarded verbatim to `diagram()` |
+A full-canvas architectural diagram slide. Renders box nodes, database tables, and connecting arrows on an explicit column-row grid with automatic elbow connector routing.
 
-You can also skip this slide kind entirely and call `diagram()` directly inside a `content` slide
-body (`examples/demo.typ` does both — see the "workflow variant" and "kind: table nodes"
-examples there) when you want diagram + free-form text on the same slide.
+For complete details on grid math, node properties, and connector routing, see the [**Diagrams Guide**](diagram.md).
 
-## `quote`
+### Parameters
 
-![Quote slide](assets/gallery/quote.png)
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `nodes` | `array` | `()` | **Yes** | Array of node definition dictionaries. |
+| `edges` | `array` | `()` | Optional | Array of edge connector dictionaries. |
+| `title` | `content` | `none` | Optional | Slide headline. |
+| `kicker` | `content` | `none` | Optional | Top mono label. |
+| `kicker-icon` | `string` | `none` | Optional | Icon name for the kicker. |
+| `cols` | `int` | `3` | Optional | Number of horizontal grid columns. |
+| `rows` | `int` | `2` | Optional | Number of vertical grid rows. |
+| `theme` | `string` | `"dark"` | Optional | Diagram color scheme: `"dark"` or `"light"`. |
+| `cell` | `dictionary` | `(width: 150pt, height: 80pt)` | Optional | Dimensions of each grid cell. |
+| `gutter` | `dictionary` | `(x: 56pt, y: 34pt)` | Optional | Horizontal and vertical gaps between cells. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-Vertically centered pull-quote (accent rule, display-weight quote text, avatar placeholder,
-attribution). Thin wrapper over `pull-quote()`.
+### Example
 
-| param | type | notes |
-|---|---|---|
-| `quote` | content | `type-scale.quote` (32pt), weight 600 |
-| `name`, `role` | content | attribution line |
+```typst
+#slide(
+  kind: "diagram",
+  kicker: [Infrastructure Topology],
+  kicker-icon: "network",
+  title: [Edge to Storage Request Flow],
+  cols: 3,
+  rows: 2,
+  theme: "dark",
+  nodes: (
+    (id: "edge", pos: (col: 0, row: 0), icon: "globe", label: [CloudFront CDN]),
+    (id: "gw",   pos: (col: 1, row: 0), icon: "server", label: [API Gateway]),
+    (id: "auth", pos: (col: 1, row: 1), icon: "shield", label: [Auth Service]),
+    (id: "db",   pos: (col: 2, row: 0), icon: "database", label: [Aurora DB], accent: true),
+  ),
+  edges: (
+    (from: "edge", to: "gw"),
+    (from: "gw",   to: "auth", label: [verify]),
+    (from: "gw",   to: "db",   label: [query]),
+  ),
+  progress: [07 / 10],
+)
+```
 
-## `team`
+---
 
-![Team slide](assets/gallery/team.png)
+## 8. `quote` — Pull-Quote & Testimonial
 
-N-up grid of photo-placeholder + name + role cards.
+![Quote Slide](assets/gallery/quote.png)
 
-| param | type | notes |
-|---|---|---|
-| `kicker`, `title` | content | optional |
-| `members` | array of dict | `(name:, role:)` per person |
-| `columns` | int | default 4 |
+A centered pull-quote layout featuring an accent bar, large display quote text (32pt), and an author avatar badge with role attribution.
 
-## `closing`
+### Parameters
 
-![Closing slide](assets/gallery/closing.png)
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `quote` | `content` | `none` | **Yes** | Main quote text block. |
+| `name` | `content` | `none` | **Yes** | Attribution name. |
+| `role` | `content` | `none` | Optional | Attribution title, company, or team role. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-Mirrors `title` on an accent background — no `progress` marker (matches `title`).
+### Example
 
-| param | type | notes |
-|---|---|---|
-| `title` | content | display-sm, weight 800, on-accent |
-| `subtitle` | content | optional, on-accent-muted |
-| `footer` | content | bottom-left, mono |
+```typst
+#slide(
+  kind: "quote",
+  quote: [Standardizing on a declarative slide format eliminated three days of manual deck touchups before every board meeting.],
+  name: [Sarah Chen],
+  role: [VP of Engineering, Enterprise Core],
+  progress: [08 / 10],
+)
+```
 
-## Adding a new slide kind
+---
 
-1. Write a private `_<kind>-slide(...)= context { page(fill: t...)[ ... ] }` function in
-   `slide.typ`, following the pattern of the existing ones (read `typeset-theme.get()`, pick
-   `paper`/`navy`/`accent` background, use `pad(x: spacing.page-x, y: spacing.page-y)` for the
-   standard margin, call `_footer-progress(progress, ...)` if it should support a progress
-   marker).
-2. Add an `else if kind == "..."` branch in the `slide()` dispatcher at the bottom of the file.
-3. Add one example to `examples/demo.typ` (keep it in mockup order — see
-   [index.md](index.md#how-the-package-fits-together)) and document it in this file.
-4. Compile-check and visually re-render — see
-   [getting-started.md](getting-started.md#gotchas) for why a compiler-clean result isn't enough.
+## 9. `team` — Multi-Column Roster
+
+![Team Slide](assets/gallery/team.png)
+
+An N-column grid of team member cards, each featuring a photo placeholder block, prominent name, and role title.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `members` | `array` | `()` | **Yes** | Array of member dictionaries: `((name: [...], role: [...]), ...)`. |
+| `kicker` | `content` | `none` | Optional | Top mono kicker label. |
+| `title` | `content` | `none` | Optional | Slide headline. |
+| `columns` | `int` | `4` | Optional | Number of horizontal team card columns (default `4`). |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Example
+
+```typst
+#slide(
+  kind: "team",
+  kicker: [Core Contributors],
+  title: [Project Leadership & Working Group],
+  columns: 4,
+  members: (
+    (name: [Elena Rostova], role: [Tech Lead / Distributed Systems]),
+    (name: [Marcus Vance],  role: [Staff SRE / Kubernetes Infra]),
+    (name: [Priya Patel],   role: [Principal Security Architect]),
+    (name: [David Kim],     role: [Senior Product Designer]),
+  ),
+  progress: [09 / 10],
+)
+```
+
+---
+
+## 10. `image` — Full-Bleed Media & Screenshot
+
+![Image Slide](assets/gallery/image.png)
+
+A full-bleed slide layout for high-resolution graphics, product UI screenshots, or architectural diagrams. Includes a navy caption bar pinned to the bottom-left corner.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `image` | `content` | `none` | **Yes** | Any Typst image or box content (e.g. `image("photo.jpg", fit: "cover")`). |
+| `caption-title` | `content` | `none` | Optional | Bold title within the bottom-left overlay bar. |
+| `caption-body` | `content` | `none` | Optional | Secondary explanatory text within the overlay bar. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Example
+
+```typst
+#slide(
+  kind: "image",
+  image: image("assets/dashboard.png", width: 100%, height: 100%, fit: "cover"),
+  caption-title: [Real-Time Telemetry Dashboard],
+  caption-body: [Monitoring live ingest latency across all regional clusters.],
+  progress: [10 / 11],
+)
+```
+
+---
+
+## 11. `closing` — Outro & Contact
+
+![Closing Slide](assets/gallery/closing.png)
+
+A matching outro slide on full accent background. Perfect for thank-you messages, repository links, contact info, and concluding Q&A.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `title` | `content` | `none` | **Yes** | Large concluding display headline. |
+| `subtitle` | `content` | `none` | Optional | Supporting farewell or discussion prompt. |
+| `footer` | `content` | `none` | Optional | Monospace link / contact footer anchored in the bottom-left. |
+
+### Example
+
+```typst
+#slide(
+  kind: "closing",
+  title: [Thank You],
+  subtitle: [Resources, benchmarks, and RFC specifications are available on the internal portal.],
+  footer: [github.com/platform/roadmap · #engineering-talks],
+)
+```

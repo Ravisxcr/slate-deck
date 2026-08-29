@@ -1,66 +1,95 @@
-# Icons and fonts
+# Icons and Fonts
 
-## Icons
+SlateDeck bundles a comprehensive library of **1,750+ vector icons** and static weights of three open-source font families to ensure your presentations look flawless on any operating system.
 
-Source: `src/components/icon.typ`, assets under `assets/icons/`.
+---
+
+## 1. Vector Icon System
+
+All icons are rendered natively as vector SVGs using the `#icon(...)` component:
 
 ```typst
-#icon("git-branch")            // line icon, inherits accent color + current text size
-#icon("terminal", size: 20pt, color: rgb("#333"))
-#icon("react", brand: true)    // brand mark, full-color, natural brand palette
+#icon("git-branch")                           // Line icon inheriting accent color
+#icon("terminal", size: 20pt, color: red)      // Custom size and color override
+#icon("react", brand: true, size: 24pt)       // Official full-color brand mark
 ```
 
-Two families:
+### Icon Categories
 
-- **Line icons** — `assets/icons/line/*.svg`. The full [Lucide](https://lucide.dev) set (~1750
-  SVGs, ISC license — see `assets/icons/line/LICENSE`), so any Lucide kebab-case name works out of
-  the box (e.g. `"terminal"`, `"git-branch"`, `"database-zap"`). Source SVGs ship with
-  `stroke="currentColor"`; `icon()` does a literal string replace of `currentColor` with the
-  resolved fill color's hex, so recoloring is just swapping the `color:` argument (defaults to the
-  theme's `accent` token).
-- **Brand marks** — `assets/icons/brand/*.svg`, from [Simple Icons](https://simpleicons.org)
-  (CC0, see `assets/icons/brand/LICENSE.md`). These ship with no fill baked in (default black), so
-  `icon(..., brand: true)` injects an explicit `fill="#hex"` on the `<svg>` root instead, looked up
-  by icon name in `assets/icons/brand/colors.typ` (`brand-colors` dict, defaulting to black if a
-  name is missing from the table). Brand marks keep their real brand color regardless of the deck's
-  accent hue — don't recolor them.
+SlateDeck organizes icons into two categories:
 
-`icon()` sizes and baseline-aligns to the surrounding text automatically (`baseline: 15%` default,
-matching Typst's own text baseline convention) — drop it inline in a sentence and it lines up
-without manual offsetting.
+### A. Line Icons (1,750+ Lucide Icons)
+- Vendored from the [Lucide](https://lucide.dev) project (ISC License).
+- Any standard Lucide icon name in `kebab-case` works instantly (e.g. `"terminal"`, `"shield"`, `"database"`, `"cpu"`, `"network"`, `"layers"`, `"sparkles"`, `"search"`, `"zap"`).
+- **Color inheritance**: By default, line icons automatically inherit the deck's active `accent` color. Pass `color: ...` to override.
 
-### Adding a new icon
+### B. Developer Brand Marks
+- Sourced from [Simple Icons](https://simpleicons.org) (CC0 License).
+- Rendered in their official brand color palettes when you pass `brand: true`.
+- Included developer brands:
 
-- **Line icon**: drop a `kebab-case.svg` with `stroke="currentColor"` into
-  `assets/icons/line/`. No code change needed — `icon()` resolves by filename.
-- **Brand mark**: drop a `kebab-case.svg` into `assets/icons/brand/`, plus a hex entry for that
-  name in `assets/icons/brand/colors.typ`.
-
-### Re-syncing the Lucide set
-
-The full set was vendored via a sparse clone of `lucide-icons/lucide`'s `icons/` directory.
-Re-sync periodically by re-running the same sparse-clone-and-copy, syncing **new filenames only**
-— existing files in `assets/icons/line/` may be curated/hand-edited, so don't blindly overwrite
-the whole directory on a re-sync.
-
-## Fonts
-
-Vendored under `assets/fonts/<Family>/`, one static `.ttf` per weight (plus that family's
-`OFL.txt`). All three families are OFL-1.1, redistributable.
-
-| family | weights | source |
+| Brand Name | Identifier (`name:`) | Example Usage |
 |---|---|---|
-| Archivo | 500, 600, 700, 800 | `Omnibus-Type/Archivo`, `fonts/ttf/` |
-| IBM Plex Sans | 400, 500, 600 | `IBM/plex`, `packages/plex-sans/fonts/complete/ttf/` |
-| IBM Plex Mono | 400, 500, 600 | `google/fonts`, `ofl/ibmplexmono/` (static files present there) |
+| **Docker** | `"docker"` | `#icon("docker", brand: true)` |
+| **Kubernetes** | `"kubernetes"` | `#icon("kubernetes", brand: true)` |
+| **GitHub** | `"github"` | `#icon("github", brand: true)` |
+| **GitLab** | `"gitlab"` | `#icon("gitlab", brand: true)` |
+| **Python** | `"python"` | `#icon("python", brand: true)` |
+| **React** | `"react"` | `#icon("react", brand: true)` |
+| **TypeScript** | `"typescript"` | `#icon("typescript", brand: true)` |
+| **JavaScript** | `"javascript"` | `#icon("javascript", brand: true)` |
+| **Go** | `"go"` | `#icon("go", brand: true)` |
+| **Rust** | `"rust"` | `#icon("rust", brand: true)` |
+| **Node.js** | `"nodedotjs"` | `#icon("nodedotjs", brand: true)` |
+| **PostgreSQL** | `"postgresql"` | `#icon("postgresql", brand: true)` |
+| **Redis** | `"redis"` | `#icon("redis", brand: true)` |
+| **Google Cloud** | `"googlecloud"` | `#icon("googlecloud", brand: true)` |
+| **Linux** | `"linux"` | `#icon("linux", brand: true)` |
+| **GraphQL** | `"graphql"` | `#icon("graphql", brand: true)` |
+| **Figma** | `"figma"` | `#icon("figma", brand: true)` |
 
-**Static weights only, never variable fonts.** Typst 0.14 does not render variable fonts
-correctly ("variable fonts are not currently supported and may render incorrectly" — confirmed by
-testing the `google/fonts` variable `.ttf`s directly), so each weight is pulled from its family's
-upstream *static*-TTF release rather than the variable-font builds `google/fonts` ships for some
-families.
+---
 
-Decks must compile with `--font-path` pointing at (or including) `assets/fonts` — see
-[getting-started.md](getting-started.md#fonts-require-font-path). If Typst's package system ever
-exposes a way for a package to declare its own font path automatically, switch to that; as of
-Typst 0.14 font loading is entirely caller-controlled via the CLI flag.
+## 2. Automatic Inline Baseline Alignment
+
+When you place an icon inside a line of text, `#icon()` automatically adjusts its vertical baseline (`baseline: 15%`) so the icon aligns perfectly with adjacent typography:
+
+```typst
+#slide(title: [Deployment Complete])[
+  Check out the latest release on #icon("github", brand: true) #link("https://github.com")[GitHub]
+  or inspect container metrics with #icon("activity") #text(weight: 600)[Live Telemetry].
+]
+```
+
+---
+
+## 3. Adding Custom Icons
+
+### Adding a Custom Line Icon
+1. Save your SVG file with `stroke="currentColor"` in `assets/icons/line/<name>.svg`.
+2. Use it directly in your deck: `#icon("<name>")`.
+
+### Adding a Custom Brand Logo
+1. Place your brand SVG in `assets/icons/brand/<name>.svg`.
+2. Add its official hex color in `assets/icons/brand/colors.typ`.
+3. Render it with `#icon("<name>", brand: true)`.
+
+---
+
+## 4. Bundled Typography
+
+To guarantee reproducible rendering across Windows, macOS, and Linux, SlateDeck bundles static weights of three font families:
+
+| Font Family | Available Weights | License | Primary Purpose |
+|---|---|---|---|
+| **Archivo** | Medium (500), SemiBold (600), Bold (700), ExtraBold (800) | SIL OFL 1.1 | Display titles, section headers, big stats |
+| **IBM Plex Sans** | Regular (400), Medium (500), SemiBold (600) | SIL OFL 1.1 | Body copy, bullet descriptions, card text |
+| **IBM Plex Mono** | Regular (400), Medium (500), SemiBold (600) | SIL OFL 1.1 | Category kickers, code blocks, slide markers |
+
+### Font Path Configuration
+
+When compiling presentations with Typst CLI, pass `--font-path` pointing to the bundled fonts folder:
+
+```sh
+typst compile --font-path "%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\assets\fonts" deck.typ deck.pdf
+```

@@ -1,112 +1,123 @@
-# Design tokens
+# Design Tokens & Theming
 
-Source: `src/theme.typ`. Everything here is read through the `typeset-theme` state, never
-hardcoded in a component — see [index.md](index.md#design-philosophy-why-some-things-are-the-way-they-are).
+SlateDeck is built on a mathematical design system engineered specifically for 16:9 widescreen presentation displays (960pt × 540pt).
 
-## Coordinate system
+Every color, font weight, type size, and vertical margin is declared as a reusable **design token**, ensuring consistent visual hierarchy across your entire slide deck.
 
-The design is derived from a reference mockup authored at **1920×1080px**. The Typst page is
-**960pt × 540pt** (16:9, equal to a standard PowerPoint slide, 13.333in × 7.5in), which makes the
-px→pt conversion factor exactly **0.5** — halve any pixel value pulled from the mockup.
+---
 
-| mockup (px) | typst (pt) | used for |
-|---|---|---|
-| 120 | 60 | horizontal page margin (`spacing.page-x`) |
-| 80–100 | 40–50 | vertical page margin / top offset (`spacing.page-y`) |
-| 14 | 7 | title-slide accent bar width |
-| 20–22 | 10–11 | kicker / label text |
-| 68 | 34 | content-slide headline (`type-scale.h2`) |
-| 112–132 | 56–66 | title / section-divider display text |
-| 340 | 170 | big-stat hero number (`type-scale.stat`) |
-| 22 | 11 | body copy (`type-scale.body`) |
-| 26 | 13 | code block text (`type-scale.code`) |
+## 1. The One-Line Rebrand System
 
-`page-size` in `theme.typ` is `(width: 960pt, height: 540pt)`. When porting any new measurement
-out of the mockup, halve it and, if it recurs, add it to `spacing`/`type-scale` rather than
-inlining a raw pt value in a component.
-
-## Color
-
-Built from a single accent hue via `make-theme(accent-hue: 250deg, accent-chroma: 0.16)`, using
-Typst's native `oklch(lightness, chroma, hue)` constructor directly (no hex conversion). Call
-`deck.with(accent-hue: ..., accent-chroma: ...)` once per document; every component reads the
-result from the `typeset-theme` state.
-
-| token | oklch | role |
-|---|---|---|
-| `paper` | `oklch(98.5%, 0.004, 80deg)` | light slide background |
-| `ink` | `oklch(20%, 0.01, 80deg)` | primary text on `paper` |
-| `ink-muted` | `oklch(45%, 0.02, 80deg)` | secondary text / body copy |
-| `ink-faint` | `oklch(65%, 0.01, 80deg)` | tertiary labels, placeholders |
-| `border` | `oklch(88%, 0.006, 80deg)` | hairlines, card borders |
-| `accent` | `oklch(55%, chroma, hue)` | the one accent color — kickers, rules, links, highlights |
-| `accent-soft` | `oklch(55%, chroma, hue, 5%)` | tinted fills (recommended-option cards, etc.) |
-| `on-accent` | `oklch(98%, 0.01, hue)` | text/icons on an `accent` background (section dividers, closing) |
-| `on-accent-muted` | `oklch(92%, 0.03, hue)` | secondary text on an `accent` background |
-| `navy` | `oklch(16%, 0.01, hue)` | dark slide background (stat, code slides) |
-| `on-navy` | `oklch(98%, 0.01, hue)` | primary text on `navy` |
-| `on-navy-muted` | `oklch(70%, 0.03, hue)` | secondary text on `navy` |
-| `on-navy-accent` | `oklch(65%, chroma - 0.02, hue)` | accent-tinted kicker text on `navy` (readable, less saturated than `accent`) |
-
-Reading the theme inside a component:
+Instead of editing dozens of hex colors across individual slides, SlateDeck generates its entire palette dynamically from a single **accent hue angle** using the native OKLCH perceptual color space:
 
 ```typst
-#import "../theme.typ": typeset-theme
+#show: deck.with(
+  title: "Quarterly Roadmap",
+  accent-hue: 250deg,   // Royal Violet / Indigo (default)
+  accent-chroma: 0.16,  // Accent saturation level (default: 0.16)
+)
+```
+
+### Popular Brand Hue Presets
+
+| Accent Hue | Visual Style | Example Tone |
+|---|---|---|
+| `250deg` | **Royal Indigo / Violet** *(Default)* | Enterprise tech, developer tools |
+| `215deg` | **Deep Electric Blue** | Cloud infrastructure, security |
+| `165deg` | **Emerald Teal** | Data science, analytics, sustainability |
+| `145deg` | **Forest Green** | Financial tech, growth updates |
+| `30deg`  | **Warm Coral / Amber** | Consumer products, creative pitches |
+| `345deg` | **Crimson Rose** | Executive summaries, marketing |
+
+---
+
+## 2. Color Palette Tokens
+
+Every color in SlateDeck is calculated with guaranteed perceptual contrast ratios.
+
+| Token | OKLCH Definition | Description & Role |
+|---|---|---|
+| `paper` | `oklch(98.5%, 0.004, 80deg)` | Ultra-light warm canvas background for default slides. |
+| `ink` | `oklch(20%, 0.01, 80deg)` | High-contrast primary dark text on light backgrounds. |
+| `ink-muted` | `oklch(45%, 0.02, 80deg)` | Secondary text, bullet body copy, and subtitles. |
+| `ink-faint` | `oklch(65%, 0.01, 80deg)` | Tertiary text, footnote labels, and subtle borders. |
+| `border` | `oklch(88%, 0.006, 80deg)` | Card borders and divider lines on light slides. |
+| `accent` | `oklch(55%, chroma, hue)` | The signature accent color — kickers, links, focus borders. |
+| `accent-soft` | `oklch(55%, chroma, hue, 5%)` | 5% opacity accent fill for recommended cards and pills. |
+| `on-accent` | `oklch(98%, 0.01, hue)` | High-contrast primary light text on accent backgrounds. |
+| `on-accent-muted` | `oklch(92%, 0.03, hue)` | Secondary text on accent backgrounds (section slides). |
+| `navy` | `oklch(16%, 0.01, hue)` | Rich dark backdrop for `stat`, `code`, and dark diagrams. |
+| `on-navy` | `oklch(98%, 0.01, hue)` | Primary light text on dark navy backgrounds. |
+| `on-navy-muted` | `oklch(70%, 0.03, hue)` | Secondary muted text on dark navy backgrounds. |
+| `on-navy-accent` | `oklch(65%, chroma - 0.02, hue)` | Readable accent-tinted kicker text on navy backdrops. |
+
+### Accessing Color Tokens in Custom Markup
+
+If you are authoring a custom element and wish to use the active theme's colors:
+
+```typst
+#import "@local/slatedeck:0.1.0": typeset-theme
 
 #context {
-  let t = typeset-theme.get()
-  text(fill: t.accent)[...]
+  let theme = typeset-theme.get()
+  rect(
+    fill: theme.accent-soft,
+    stroke: 1.5pt + theme.accent,
+    radius: 4pt,
+    inset: 12pt,
+    text(fill: theme.ink)[Custom themed container]
+  )
 }
 ```
 
-`typeset-theme.get()` requires a `context` block since it's document state — every component in
-`src/components/` already follows this pattern.
+---
 
-## Typography
+## 3. Typography System
 
-Three families, one role each:
+SlateDeck uses three open-source font families, each tailored for a specific presentation role:
 
-| family | weights | role |
+| Family | Static Weights | Role & Usage |
 |---|---|---|
-| **Archivo** | 500, 600, 700, 800 | display — titles, section dividers, headlines, big-stat numbers, quote text. Always tight tracking (`-0.01em` to `-0.03em`) at large sizes. |
-| **IBM Plex Sans** | 400, 500, 600 | body copy, bullet text, captions |
-| **IBM Plex Mono** | 400, 500, 600 | kickers (uppercase, `tracking: 0.08em`), slide numbers/footers, code blocks, inline code |
+| **Archivo** | 500, 600, 700, 800 | **Display**: Cover titles, section headers, big-stat numbers, and headlines. |
+| **IBM Plex Sans** | 400, 500, 600 | **Body**: Paragraphs, bullet descriptions, card text, and captions. |
+| **IBM Plex Mono** | 400, 500, 600 | **Monospace**: Category kickers, slide progress numbers, and code blocks. |
 
-Font roles are exposed as `fonts.display` / `fonts.body` / `fonts.mono` (`src/theme.typ`) — use
-the role, not a literal family-name string, so a future font swap is one edit.
+### Type Scale (`type-scale`)
 
-### Type scale (`type-scale`)
-
-| token | size | used for |
+| Token | Size | Primary Usage |
 |---|---|---|
-| `kicker` / `body` | 11pt | body copy, kicker label size |
-| `body-lg` | 14pt | title-slide subtitle |
-| `eyebrow` | 10pt | title-slide eyebrow label |
-| `h2` | 34pt | content-slide headline |
-| `display-sm` | 56pt | section-divider / closing title |
-| `display` | 66pt | title-slide headline |
-| `stat` | 170pt | big-stat hero number |
-| `quote` | 32pt | pull-quote text |
-| `code` | 13pt | code block text |
-| `number` | 20pt | footer progress marker / byline |
+| `eyebrow` | `10pt` | Cover slide eyebrow kicker. |
+| `kicker` | `11pt` | Standard slide category label. |
+| `body` | `11pt` | Primary body text and bullet descriptions. |
+| `code` | `13pt` | Code block syntax text. |
+| `body-lg` | `14pt` | Subtitle text on title and section slides. |
+| `number` | `20pt` | Numbered grid indices and bottom-right slide progress. |
+| `quote` | `32pt` | Large pull-quote text. |
+| `h2` | `34pt` | Standard content slide headline. |
+| `display-sm`| `56pt` | Section divider and closing slide titles. |
+| `display` | `66pt` | Main cover title on `title` slides. |
+| `stat` | `170pt` | Oversized metric numbers on `stat` slides. |
 
-Some slide kinds use one-off literal sizes local to that layout (e.g. the code-slide title at
-`30pt`) rather than a named token — that's intentional per the project convention: repeated
-values go in `theme.typ`, one-off layout numbers local to a single slide kind stay as literals in
-`slide.typ`.
+---
 
-## Spacing (`spacing`)
+## 4. Spacing Scale (`spacing`)
 
-A t-shirt scale in pt, derived by the same 0.5 px→pt factor as the coordinate table above. Don't
-hardcode a raw pt value for gaps/padding that recur — add to this scale instead.
+A proportional t-shirt spacing scale ensures consistent rhythm and eliminates arbitrary pixel offsets:
 
-| token | value | typical use |
+| Token | Value | Typical Usage |
 |---|---|---|
-| `xs` | 8pt | tight inline gaps |
-| `sm` | 14pt | label-to-content gap |
-| `md` | 20pt | icon-to-label gap |
-| `lg` | 34pt | card padding, section gaps |
-| `xl` | 56pt | headline-to-body gap |
-| `xxl` | 70pt | large vertical section breaks |
-| `page-x` | 60pt | horizontal page margin |
-| `page-y` | 40pt | vertical page margin |
+| `spacing.xs` | `8pt` | Tight inline icon-to-text spacing. |
+| `spacing.sm` | `14pt` | Space between kicker label and headline title. |
+| `spacing.md` | `20pt` | Gap between icons and card text. |
+| `spacing.lg` | `34pt` | Internal card padding and small section gaps. |
+| `spacing.xl` | `56pt` | Space between headline title and body content. |
+| `spacing.xxl` | `70pt` | Major vertical section breaks. |
+| `spacing.page-x` | `60pt` | Standard horizontal slide margin. |
+| `spacing.page-y` | `40pt` | Standard vertical slide margin. |
+
+---
+
+## 5. Page Dimensions & Aspect Ratio
+
+- **Dimensions**: `960pt × 540pt` (standard 16:9 widescreen ratio, equivalent to 13.333in × 7.5in).
+- **Resolution**: Fully vector-rendered — sharp at any presentation display resolution (1080p, 4K, 8K).
