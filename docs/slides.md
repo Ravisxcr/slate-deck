@@ -37,15 +37,15 @@ The primary presentation cover slide. Features a vertical accent bar on the left
 | `subtitle` | `content` | `none` | Optional | Descriptive subtitle copy in muted text color. |
 | `byline` | `array` | `()` | Optional | Array of metadata items displayed along the bottom, e.g. `([Author], [Team], [Date])`. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "title",
   eyebrow: [SlateDeck — Presentation Framework],
   eyebrow-icon: "terminal",
-  title: [Slides That Read Like a Spec],
-  subtitle: [A structured Typst template system for corporate updates and developer talks.],
+  title: [Slides that read like a spec.],
+  subtitle: [A Typst template system for corporate updates and developer talks — built on a strict grid, one accent color, and typography that holds up at the back of the room.],
   byline: ([Jordan Reyes], [Platform Engineering], [Jul 2026]),
 )
 ```
@@ -67,14 +67,14 @@ A full-bleed slide filled with your deck's `accent` color. Used to introduce maj
 | `blurb` | `content` | `none` | Optional | Short paragraph describing the section's objectives. |
 | `progress` | `content` | `none` | Optional | Monospace slide marker, e.g. `[02 / 10]`. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "section",
   label: [Section 02],
-  title: [Architecture & Rollout Plan],
-  blurb: [Detailed migration phases, data layer isolation, and risk mitigation strategies.],
+  title: [Architecture & rollout plan],
+  blurb: [What we're shipping, in what order, and who owns each piece.],
   progress: [02 / 10],
 )
 ```
@@ -96,19 +96,16 @@ The primary workhorse slide layout. Provides a standardized kicker and headline 
 | `title` | `content` | `none` | Optional | Primary slide headline (Archivo 34pt bold). |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
-#slide(
-  kicker: [Design Principles],
-  title: [Three core improvements in the new pipeline],
-  progress: [03 / 10],
-)[
+#slide(kicker: [Why this matters], title: [Three problems the old deck format created], progress: [03 / 10])[
   #numbered-grid((
-    ([Predictable Layouts], [No hand-crafted coordinate offsets or brittle CSS boxes.]),
-    ([Integrated Code Blocks], [Syntax highlighting and line numbers rendered natively.]),
-    ([Instant Rebranding], [Derive the entire color scheme from a single hue degree.]),
-  ), columns: 3)
+    ([Inconsistent typography], [Every team hand-rolled fonts and spacing, so decks never matched each other.]),
+    ([No code-native layout], [Pasting snippets into slideware always broke indentation and syntax color.]),
+    ([Manual rebuilds every quarter], [Rebranding meant editing forty individual slide files by hand.]),
+    ([Not version-controllable], [Binary deck files can't be diffed, reviewed, or merged like the rest of our docs.]),
+  ))
 ]
 ```
 
@@ -116,7 +113,7 @@ The primary workhorse slide layout. Provides a standardized kicker and headline 
 
 ## 4. `compare` — Feature & Option Comparison
 
-![Compare Slide](assets/gallery/mongodb-compare.png)
+![Compare Slide](assets/gallery/compare.png)
 
 A structured two-column comparison layout. Each column is rendered as a clean bordered card. Setting `recommended: true` on either card applies an accent border and soft accent fill to emphasize the preferred option.
 
@@ -132,34 +129,26 @@ A structured two-column comparison layout. Each column is rendered as a clean bo
 
 ### Card Dictionary Fields
 - `label`: Small uppercase card header (e.g. `[Option A]`).
-- `title`: Main card title (e.g. `[Self-Hosted Solution]`).
+- `title`: Main card title (e.g. `[Adopt a generic Typst theme]`).
 - `items`: Array of content items rendered as bulletless feature lines.
 - `recommended`: Boolean (`true` / `false`). Toggles accent highlight styling.
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "compare",
-  kicker: [Architecture Evaluation],
-  title: [Tradeoff Analysis: REST vs Event Streams],
+  kicker: [Build vs. buy],
+  title: [Two paths to a shared template],
   left: (
-    label: [Synchronous REST],
-    title: [Direct HTTP Endpoints],
-    items: (
-      [Simple request-response semantics],
-      [Point-to-point coupling between services],
-      [Cascading latency under downstream load],
-    ),
+    label: [Option A],
+    title: [Adopt a generic Typst theme],
+    items: ([Ships this week], [No brand ownership], [Breaks on rebrand], [Generic component set]),
   ),
   right: (
-    label: [Event-Driven (Recommended)],
-    title: [Kafka Event Streaming],
-    items: (
-      [Fully asynchronous and decoupled processing],
-      [Buffer spikes with durable message logs],
-      [Enables real-time analytics subscribers],
-    ),
+    label: [Option B — recommended],
+    title: [Build our own package],
+    items: ([2 weeks to v1], [Full brand control], [One-line rebrand via config], [Components tuned to our content]),
     recommended: true,
   ),
   progress: [04 / 10],
@@ -184,24 +173,57 @@ A high-contrast, dark navy slide featuring an oversized hero number (170pt displ
 | `note` | `content` | `none` | Optional | Footnote or source citation anchored at the bottom-left. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "stat",
-  kicker: [Performance Benchmark],
-  value: [10x],
-  caption: [Faster query execution after columnar indexing],
-  note: [Measured across 50M records on standard cloud instances.],
+  kicker: [Deck production time],
+  value: [6x],
+  caption: [faster from outline to reviewed deck],
+  note: [Measured across 14 decks migrated from slideware to the package, Q2 2026.],
   progress: [05 / 10],
 )
 ```
 
 ---
 
-## 6. `code` — Syntax-Highlighted Code Showcase
+## 6. `image` — Full-Bleed Media & Screenshot
 
-![Code Slide](assets/gallery/mongodb-code.png)
+![Image Slide](assets/gallery/image.png)
+
+A full-bleed slide layout for high-resolution graphics, product UI screenshots, or architectural diagrams. Includes a navy caption bar pinned to the bottom-left corner.
+
+### Parameters
+
+| Parameter | Type | Default | Required? | Description |
+|---|---|---|---|---|
+| `image` | `content` | `none` | **Yes** | Any Typst image or box content (e.g. `image("photo.jpg", fit: "cover")` or placeholder). |
+| `caption-title` | `content` | `none` | Optional | Bold title within the bottom-left overlay bar. |
+| `caption-body` | `content` | `none` | Optional | Secondary explanatory text within the overlay bar. |
+| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+
+### Exact Code for Above Slide
+
+```typst
+#slide(
+  kind: "image",
+  image: rect(width: 100%, height: 100%, fill: luma(230))[
+    #align(center + horizon)[
+      #text(font: "IBM Plex Mono", size: 13pt, fill: luma(100))[\[ product screenshot — drop full-bleed image here \]]
+    ]
+  ],
+  caption-title: [Dashboard v2],
+  caption-body: [Redesigned monitoring view, shipping with this release],
+  progress: [06 / 10],
+)
+```
+
+---
+
+## 7. `code` — Syntax-Highlighted Code Showcase
+
+![Code Slide](assets/gallery/code.png)
 
 A dedicated slide for presenting syntax-highlighted source code with line numbers, custom language tagging, and accent line highlights.
 
@@ -218,34 +240,23 @@ A dedicated slide for presenting syntax-highlighted source code with line number
 | `highlight` | `array` | `()` | Optional | Array of line numbers or inclusive ranges to highlight, e.g. `(3, (5, 7))`. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "code",
-  kicker: [Data Pipeline],
-  kicker-icon: "database",
-  title: [Aggregation Pipeline: Filter & Transform],
-  lang: "js",
-  highlight: (2, (4, 6)),
-  code: ```js
-  db.orders.aggregate([
-    { $match: { status: "completed", year: 2026 } },
-    { $group: {
-        _id: "$region",
-        totalRevenue: { $sum: "$amount" },
-        orderCount: { $count: {} }
-    }},
-    { $sort: { totalRevenue: -1 } }
-  ])
-  ```,
-  progress: [06 / 10],
+  kicker: [API surface],
+  kicker-icon: "code",
+  title: [Declaring a slide is four lines],
+  lang: "typ",
+  code: "#import \"@local/slatedeck:0.1.0\": *\n\n#slide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+  progress: [07 / 10],
 )
 ```
 
 ---
 
-## 7. `diagram` — System Architecture Canvas
+## 8. `diagram` — System Architecture Canvas
 
 ![Diagram Slide](assets/gallery/diagram.png)
 
@@ -269,35 +280,37 @@ For complete details on grid math, node properties, and connector routing, see t
 | `gutter` | `dictionary` | `(x: 56pt, y: 34pt)` | Optional | Horizontal and vertical gaps between cells. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "diagram",
-  kicker: [Infrastructure Topology],
-  kicker-icon: "network",
-  title: [Edge to Storage Request Flow],
-  cols: 3,
+  kicker: [Component: diagram()],
+  kicker-icon: "workflow",
+  title: [Request path through the new service],
+  cols: 4,
   rows: 2,
   theme: "dark",
   nodes: (
-    (id: "edge", pos: (col: 0, row: 0), icon: "globe", label: [CloudFront CDN]),
-    (id: "gw",   pos: (col: 1, row: 0), icon: "server", label: [API Gateway]),
-    (id: "auth", pos: (col: 1, row: 1), icon: "shield", label: [Auth Service]),
-    (id: "db",   pos: (col: 2, row: 0), icon: "database", label: [Aurora DB], accent: true),
+    (id: "cdn",   pos: (col: 0, row: 0), icon: "globe",        label: [CloudFront]),
+    (id: "api",   pos: (col: 1, row: 0), icon: "server",       label: [API Gateway]),
+    (id: "fn",    pos: (col: 2, row: 0), icon: "boxes",        label: [Lambda]),
+    (id: "cache", pos: (col: 2, row: 1), icon: "database-zap", label: [ElastiCache]),
+    (id: "db",    pos: (col: 3, row: 1), icon: "database",     label: [DynamoDB], accent: true),
   ),
   edges: (
-    (from: "edge", to: "gw"),
-    (from: "gw",   to: "auth", label: [verify]),
-    (from: "gw",   to: "db",   label: [query]),
+    (from: "cdn", to: "api"),
+    (from: "api", to: "fn"),
+    (from: "fn",  to: "cache", style: "dashed", arrow: "both", label: [cache]),
+    (from: "fn",  to: "db",    label: [write]),
   ),
-  progress: [07 / 10],
+  progress: [08 / 10],
 )
 ```
 
 ---
 
-## 8. `quote` — Pull-Quote & Testimonial
+## 9. `quote` — Pull-Quote & Testimonial
 
 ![Quote Slide](assets/gallery/quote.png)
 
@@ -312,21 +325,21 @@ A centered pull-quote layout featuring an accent bar, large display quote text (
 | `role` | `content` | `none` | Optional | Attribution title, company, or team role. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "quote",
-  quote: [Standardizing on a declarative slide format eliminated three days of manual deck touchups before every board meeting.],
-  name: [Sarah Chen],
-  role: [VP of Engineering, Enterprise Core],
-  progress: [08 / 10],
+  quote: [Switching to the shared template meant every team's deck finally looked like it came from the same company.],
+  name: [Priya Nathan],
+  role: [VP, Developer Platform],
+  progress: [09 / 10],
 )
 ```
 
 ---
 
-## 9. `team` — Multi-Column Roster
+## 10. `team` — Multi-Column Roster
 
 ![Team Slide](assets/gallery/team.png)
 
@@ -342,50 +355,21 @@ An N-column grid of team member cards, each featuring a photo placeholder block,
 | `columns` | `int` | `4` | Optional | Number of horizontal team card columns (default `4`). |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "team",
-  kicker: [Core Contributors],
-  title: [Project Leadership & Working Group],
+  kicker: [Who's building it],
+  title: [The core package team],
   columns: 4,
   members: (
-    (name: [Elena Rostova], role: [Tech Lead / Distributed Systems]),
-    (name: [Marcus Vance],  role: [Staff SRE / Kubernetes Infra]),
-    (name: [Priya Patel],   role: [Principal Security Architect]),
-    (name: [David Kim],     role: [Senior Product Designer]),
+    (name: [Jordan Reyes], role: [Platform Eng]),
+    (name: [Priya Nathan], role: [Dev Platform VP]),
+    (name: [Marcus Ito],   role: [Typography]),
+    (name: [Ana Cole],     role: [Design Systems]),
   ),
-  progress: [09 / 10],
-)
-```
-
----
-
-## 10. `image` — Full-Bleed Media & Screenshot
-
-![Image Slide](assets/gallery/image.png)
-
-A full-bleed slide layout for high-resolution graphics, product UI screenshots, or architectural diagrams. Includes a navy caption bar pinned to the bottom-left corner.
-
-### Parameters
-
-| Parameter | Type | Default | Required? | Description |
-|---|---|---|---|---|
-| `image` | `content` | `none` | **Yes** | Any Typst image or box content (e.g. `image("photo.jpg", fit: "cover")`). |
-| `caption-title` | `content` | `none` | Optional | Bold title within the bottom-left overlay bar. |
-| `caption-body` | `content` | `none` | Optional | Secondary explanatory text within the overlay bar. |
-| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
-
-### Example
-
-```typst
-#slide(
-  kind: "image",
-  image: image("assets/dashboard.png", width: 100%, height: 100%, fit: "cover"),
-  caption-title: [Real-Time Telemetry Dashboard],
-  caption-body: [Monitoring live ingest latency across all regional clusters.],
-  progress: [10 / 11],
+  progress: [10 / 10],
 )
 ```
 
@@ -405,13 +389,13 @@ A matching outro slide on full accent background. Perfect for thank-you messages
 | `subtitle` | `content` | `none` | Optional | Supporting farewell or discussion prompt. |
 | `footer` | `content` | `none` | Optional | Monospace link / contact footer anchored in the bottom-left. |
 
-### Example
+### Exact Code for Above Slide
 
 ```typst
 #slide(
   kind: "closing",
-  title: [Thank You],
-  subtitle: [Resources, benchmarks, and RFC specifications are available on the internal portal.],
-  footer: [github.com/platform/roadmap · #engineering-talks],
+  title: [Thank you.],
+  subtitle: [Package docs, install instructions, and source live at the link below.],
+  footer: [github.com/ravisxcr/slate-deck · \#design-systems],
 )
 ```

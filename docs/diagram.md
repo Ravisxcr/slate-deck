@@ -13,23 +13,26 @@ Unlike external diagramming tools that generate static bitmaps, SlateDeck diagra
 ```typst
 #slide(
   kind: "diagram",
-  title: [Serverless Microservices Architecture],
-  cols: 3,
+  kicker: [Component: diagram()],
+  kicker-icon: "workflow",
+  title: [Request path through the new service],
+  cols: 4,
   rows: 2,
   theme: "dark",
   nodes: (
-    (id: "client", pos: (col: 0, row: 0), icon: "globe",   label: [Web Client]),
-    (id: "api",    pos: (col: 1, row: 0), icon: "server",  label: [API Gateway]),
-    (id: "worker", pos: (col: 1, row: 1), icon: "cpu",     label: [Async Worker]),
-    (id: "db",     pos: (col: 2, row: 0), icon: "database",label: [PostgreSQL], accent: true),
-    (id: "queue",  pos: (col: 2, row: 1), icon: "layers",  label: [SQS Queue]),
+    (id: "cdn",   pos: (col: 0, row: 0), icon: "globe",        label: [CloudFront]),
+    (id: "api",   pos: (col: 1, row: 0), icon: "server",       label: [API Gateway]),
+    (id: "fn",    pos: (col: 2, row: 0), icon: "boxes",        label: [Lambda]),
+    (id: "cache", pos: (col: 2, row: 1), icon: "database-zap", label: [ElastiCache]),
+    (id: "db",    pos: (col: 3, row: 1), icon: "database",     label: [DynamoDB], accent: true),
   ),
   edges: (
-    (from: "client", to: "api"),
-    (from: "api",    to: "db",    label: [query]),
-    (from: "api",    to: "queue", label: [enqueue], style: "dashed"),
-    (from: "queue",  to: "worker",label: [process]),
+    (from: "cdn", to: "api"),
+    (from: "api", to: "fn"),
+    (from: "fn",  to: "cache", style: "dashed", arrow: "both", label: [cache]),
+    (from: "fn",  to: "db",    label: [write]),
   ),
+  progress: [08 / 10],
 )
 ```
 
@@ -172,6 +175,8 @@ edges: (
 
 ### Example A: Cloud Architecture (Dark Theme)
 
+![Cloud Architecture Diagram (Dark Theme)](assets/gallery/diagram-cloud.png)
+
 ```typst
 #slide(
   kind: "diagram",
@@ -197,6 +202,8 @@ edges: (
 ```
 
 ### Example B: Database ER Schema (Light Theme)
+
+![Database ER Schema Diagram (Light Theme)](assets/gallery/diagram-er.png)
 
 ```typst
 #slide(

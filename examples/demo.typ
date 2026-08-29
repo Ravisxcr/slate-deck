@@ -1,10 +1,10 @@
 #import "../src/lib.typ": *
 
-#show: deck.with(title: "typeset demo deck", author: "Ravi", accent-hue: 250deg)
+#show: deck.with(title: "SlateDeck Demo", author: "Ravi", accent-hue: 250deg)
 
 #slide(
   kind: "title",
-  eyebrow: [typeset — presentation package],
+  eyebrow: [SlateDeck — Presentation Framework],
   eyebrow-icon: "terminal",
   title: [Slides that read like a spec.],
   subtitle: [A Typst template system for corporate updates and developer talks — built on a strict grid, one accent color, and typography that holds up at the back of the room.],
@@ -19,7 +19,7 @@
   progress: [02 / 10],
 )
 
-#slide(kicker: [Why this matters], title: [Three problems the old deck format created])[
+#slide(kicker: [Why this matters], title: [Three problems the old deck format created], progress: [03 / 10])[
   #numbered-grid((
     ([Inconsistent typography], [Every team hand-rolled fonts and spacing, so decks never matched each other.]),
     ([No code-native layout], [Pasting snippets into slideware always broke indentation and syntax color.]),
@@ -43,6 +43,7 @@
     items: ([2 weeks to v1], [Full brand control], [One-line rebrand via config], [Components tuned to our content]),
     recommended: true,
   ),
+  progress: [04 / 10],
 )
 
 #slide(
@@ -51,6 +52,7 @@
   value: [6x],
   caption: [faster from outline to reviewed deck],
   note: [Measured across 14 decks migrated from slideware to the package, Q2 2026.],
+  progress: [05 / 10],
 )
 
 #slide(
@@ -62,6 +64,7 @@
   ],
   caption-title: [Dashboard v2],
   caption-body: [Redesigned monitoring view, shipping with this release],
+  progress: [06 / 10],
 )
 
 #slide(
@@ -69,7 +72,9 @@
   kicker: [API surface],
   kicker-icon: "code",
   title: [Declaring a slide is four lines],
-  code: "#import \"@local/typeset:0.1.0\": *\n\nslide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+  lang: "typ",
+  code: "#import \"@local/slatedeck:0.1.0\": *\n\n#slide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+  progress: [07 / 10],
 )
 
 #slide(
@@ -78,7 +83,9 @@
   kicker-icon: "code",
   title: [Same block, paper background],
   theme: "light",
-  code: "#import \"@local/typeset:0.1.0\": *\n\nslide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+  lang: "typ",
+  code: "#import \"@local/slatedeck:0.1.0\": *\n\n#slide(kind: \"content\")[\n  = Rollout timeline\n  - Week 1: internal dogfood\n]",
+  progress: [07 / 10],
 )
 
 #slide(
@@ -102,6 +109,7 @@
   cols: 4,
   rows: 2,
   theme: "dark",
+  progress: [08 / 10],
 )
 
 #slide(kicker: [Component: diagram(), workflow variant], title: [Same primitive, a linear flowchart instead])[
@@ -163,6 +171,7 @@
   quote: [Switching to the shared template meant every team's deck finally looked like it came from the same company.],
   name: [Priya Nathan],
   role: [VP, Developer Platform],
+  progress: [09 / 10],
 )
 
 #slide(
@@ -175,6 +184,8 @@
     (name: [Marcus Ito], role: [Typography]),
     (name: [Ana Cole], role: [Design Systems]),
   ),
+  columns: 4,
+  progress: [10 / 10],
 )
 
 #slide(kicker: [Component: icon()], title: [One icon call, two icon families])[
@@ -220,5 +231,5 @@
   kind: "closing",
   title: [Thank you.],
   subtitle: [Package docs, install instructions, and source live at the link below.],
-  footer: [typst.app/packages/typeset · \#design-systems],
+  footer: [github.com/ravisxcr/slate-deck · \#design-systems],
 )
