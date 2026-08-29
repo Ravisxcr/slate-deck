@@ -6,6 +6,8 @@ docs_dir = "docs"
 # GitHub Pages serves this project at https://<owner>.github.io/<repo>/ (or a custom domain).
 # Instant navigation relies on the generated sitemap.xml, which is empty without this set.
 site_url = "https://ravisxcr.github.io/slate-deck/"
+repo_url = "https://github.com/Ravisxcr/slate-deck"
+repo_name = "Ravisxcr/slate-deck"
 
 nav = [
   {"Home" = "index.md"},
@@ -25,3 +27,29 @@ features = [
   "navigation.top",
   "content.code.copy",
 ]
+
+[project.theme.icon]
+repo = "fontawesome/brands/github"
+
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/Ravisxcr/slate-deck"
+
