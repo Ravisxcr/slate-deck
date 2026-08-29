@@ -252,10 +252,8 @@ edges: (
 
 ## 7. Troubleshooting & Layout Tips
 
-> [!TIP]
-> **Routing Lanes**
-> If an elbow connector crosses through an intermediate node on a crowded diagram, add an empty column or row between them to serve as a clear routing lane.
+!!! tip "Routing Lanes"
+    If an elbow connector crosses through an intermediate node on a crowded diagram, add an empty column or row between them to serve as a clear routing lane.
 
-> [!NOTE]
-> **Using `diagram()` in `content` Slides**
-> You can also call `diagram()` directly inside any `#slide(kind: "content")[ ... ]` body if you want to place custom descriptive copy or a legend alongside the diagram.
+!!! note "Using `diagram()` in `content` Slides"
+    You can also call `diagram()` directly inside any `#slide(kind: "content")[ ... ]` body if you want to place custom descriptive copy or a legend alongside the diagram.

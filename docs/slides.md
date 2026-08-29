@@ -15,9 +15,8 @@ Every slide is authored using the unified `#slide(...)` function:
 ]
 ```
 
-> [!NOTE]
-> **Progress Indicator**
-> Every slide kind (except `title` and `closing`) accepts the optional `progress:` parameter, rendering an elegant monospace progress counter in the bottom-right corner (e.g. `progress: [03 / 12]`).
+!!! note "Progress Indicator"
+    Every slide kind (except `title` and `closing`) accepts the optional `progress:` parameter, rendering an elegant monospace progress counter in the bottom-right corner (e.g. `progress: [03 / 12]`).
 
 ---
 

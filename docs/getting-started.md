@@ -59,9 +59,8 @@ To export every slide as an individual high-resolution PNG image (e.g. for web e
 typst compile --format png my-deck.typ "slide-{p}.png"
 ```
 
-> [!TIP]
-> **Optional Manual `--font-path` Flag**
-> If you are working on an airgapped machine or prefer not to install fonts into your user profile, you can still optionally supply `--font-path assets/fonts` during compilation.
+!!! tip "Optional Manual `--font-path` Flag"
+    If you are working on an airgapped machine or prefer not to install fonts into your user profile, you can still optionally supply `--font-path assets/fonts` during compilation.
 
 ---
 
@@ -156,13 +155,11 @@ You can change the accent personality of your entire presentation by tweaking `a
 
 ## 5. Presentation Authoring Tips & Best Practices
 
-> [!NOTE]
-> **Controlled Vertical Spacing**
-> SlateDeck precisely regulates vertical rhythm using explicit spacing tokens (`spacing.xs` to `spacing.xxl`). Typst's default paragraph spacing is zeroed inside slides to prevent content from silently overflowing onto extra pages. When creating custom layouts inside `content` slides, use stack spacing (`stack(spacing: 12pt, ...)`) or explicit vertical gaps (`#v(14pt)`).
+!!! note "Controlled Vertical Spacing"
+    SlateDeck precisely regulates vertical rhythm using explicit spacing tokens (`spacing.xs` to `spacing.xxl`). Typst's default paragraph spacing is zeroed inside slides to prevent content from silently overflowing onto extra pages. When creating custom layouts inside `content` slides, use stack spacing (`stack(spacing: 12pt, ...)`) or explicit vertical gaps (`#v(14pt)`).
 
-> [!TIP]
-> **Using Code Blocks**
-> When writing code inside slides, prefer passing raw code blocks ` ```lang ... ``` ` rather than escaped strings. This gives you native editor syntax highlighting while editing your slides.
+!!! tip "Using Code Blocks"
+    When writing code inside slides, prefer passing raw code blocks ` ```lang ... ``` ` rather than escaped strings. This gives you native editor syntax highlighting while editing your slides.
 
 ---
 
