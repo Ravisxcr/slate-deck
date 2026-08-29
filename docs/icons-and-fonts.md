@@ -76,7 +76,7 @@ When you place an icon inside a line of text, `#icon()` automatically adjusts it
 
 ---
 
-## 4. Bundled Typography
+## 4. Bundled Typography & Automatic Discovery
 
 To guarantee reproducible rendering across Windows, macOS, and Linux, SlateDeck bundles static weights of three font families:
 
@@ -86,10 +86,12 @@ To guarantee reproducible rendering across Windows, macOS, and Linux, SlateDeck 
 | **IBM Plex Sans** | Regular (400), Medium (500), SemiBold (600) | SIL OFL 1.1 | Body copy, bullet descriptions, card text |
 | **IBM Plex Mono** | Regular (400), Medium (500), SemiBold (600) | SIL OFL 1.1 | Category kickers, code blocks, slide markers |
 
-### Font Path Configuration
+### Zero-Configuration Font Discovery
 
-When compiling presentations with Typst CLI, pass `--font-path` pointing to the bundled fonts folder:
+When you run `./install.ps1` (Windows) or `./install.sh` (macOS/Linux), the installer automatically registers these font files into your user font library.
 
+You can compile or watch decks directly with zero CLI flags:
 ```sh
-typst compile --font-path "%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\assets\fonts" deck.typ deck.pdf
+typst watch my-deck.typ my-deck.pdf
+typst compile my-deck.typ my-deck.pdf
 ```

@@ -22,11 +22,11 @@ chmod +x ./install.sh
 ```
 
 ### What the installer does
-The script copies the package manifest, source files, bundled fonts, and icon assets into your local Typst packages directory:
-
-- **Windows**: `%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\`
-- **macOS**: `~/Library/Application Support/typst/packages/local/slatedeck/0.1.0/`
-- **Linux**: `~/.local/share/typst/packages/local/slatedeck/0.1.0/`
+1. Copies the package manifest, source files, and icon assets into your local Typst packages directory:
+   - **Windows**: `%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\`
+   - **macOS**: `~/Library/Application Support/typst/packages/local/slatedeck/0.1.0/`
+   - **Linux**: `~/.local/share/typst/packages/local/slatedeck/0.1.0/`
+2. **Automatically installs and registers all bundled fonts** (Archivo, IBM Plex Sans, IBM Plex Mono) into your user font directory and environment.
 
 Once installed, any `.typ` file on your machine can import SlateDeck with:
 ```typst
@@ -35,35 +35,33 @@ Once installed, any `.typ` file on your machine can import SlateDeck with:
 
 ---
 
-## 2. Compiling Presentations
+## 2. Compiling Presentations (Zero Config)
 
-Typst compiles `.typ` files directly into PDF documents or PNG slide images.
-
-### Supplying the Bundled Fonts
-
-SlateDeck includes static weights of **Archivo**, **IBM Plex Sans**, and **IBM Plex Mono** to guarantee consistent rendering everywhere. Pass `--font-path` when compiling so Typst loads these fonts:
-
-```sh
-# On Windows:
-typst compile --font-path "%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\assets\fonts" my-deck.typ my-deck.pdf
-
-# On macOS / Linux:
-typst compile --font-path "$HOME/Library/Application Support/typst/packages/local/slatedeck/0.1.0/assets/fonts" my-deck.typ my-deck.pdf
-```
+Because the installer registers the bundled fonts into your system, you can compile and watch your presentations directly **without passing any font path flags**:
 
 ### Live Preview with Watch Mode
 
 To automatically recompile your slides whenever you save your document:
 ```sh
-typst watch --font-path assets/fonts my-deck.typ my-deck.pdf
+typst watch my-deck.typ my-deck.pdf
+```
+
+### Single Compile to PDF
+
+```sh
+typst compile my-deck.typ my-deck.pdf
 ```
 
 ### Exporting Slide Images (PNG)
 
 To export every slide as an individual high-resolution PNG image (e.g. for web embedding, social media, or previews):
 ```sh
-typst compile --font-path assets/fonts --format png my-deck.typ "slide-{p}.png"
+typst compile --format png my-deck.typ "slide-{p}.png"
 ```
+
+> [!TIP]
+> **Optional Manual `--font-path` Flag**
+> If you are working on an airgapped machine or prefer not to install fonts into your user profile, you can still optionally supply `--font-path assets/fonts` during compilation.
 
 ---
 
@@ -122,9 +120,9 @@ Create a new file called `my-deck.typ` and paste the following boilerplate:
 )
 ```
 
-Compile it with:
+Start editing with live preview:
 ```sh
-typst compile --font-path assets/fonts my-deck.typ my-deck.pdf
+typst watch my-deck.typ my-deck.pdf
 ```
 
 ---
@@ -165,10 +163,6 @@ You can change the accent personality of your entire presentation by tweaking `a
 > [!TIP]
 > **Using Code Blocks**
 > When writing code inside slides, prefer passing raw code blocks ` ```lang ... ``` ` rather than escaped strings. This gives you native editor syntax highlighting while editing your slides.
-
-> [!IMPORTANT]
-> **Font Verification**
-> If your rendered PDF displays generic serif or sans-serif fonts instead of Archivo and IBM Plex, verify that your `--font-path` argument points to the directory containing the static `.ttf` font files.
 
 ---
 

@@ -38,14 +38,13 @@ chmod +x ./install.sh
 ./install.sh
 ```
 
-Once installed, import SlateDeck in any `.typ` file:
-```typst
-#import "@local/slatedeck:0.1.0": *
-```
+The installer automatically installs the package and **registers the bundled fonts** (Archivo, IBM Plex Sans, IBM Plex Mono) into your user profile.
 
 ---
 
 ## Quickstart Example
+
+Once installed, create your presentation file `my-deck.typ`:
 
 ```typst
 #import "@local/slatedeck:0.1.0": *
@@ -81,9 +80,14 @@ Once installed, import SlateDeck in any `.typ` file:
 ]
 ```
 
-Compile with the bundled fonts:
+### Compile & Live Preview (Zero Extra Flags)
+
 ```sh
-typst compile --font-path "%LOCALAPPDATA%\typst\packages\local\slatedeck\0.1.0\assets\fonts" deck.typ deck.pdf
+# Live watch mode:
+typst watch my-deck.typ my-deck.pdf
+
+# Single compile:
+typst compile my-deck.typ my-deck.pdf
 ```
 
 ---
