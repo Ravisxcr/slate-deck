@@ -1,78 +1,102 @@
-# typeset docs
+# SlateDeck Documentation
 
-Reference documentation for the `typeset` Typst package (`src/`). This is the API/architecture
-reference; for a quick pitch and the visual gallery see the
-[repo README](https://github.com/Ravisxcr/slate-deck#readme).
+**SlateDeck** is a high-precision, opinionated presentation framework for [Typst](https://typst.app). It is engineered for developer talks, technical briefings, and executive updates where crisp typography, code clarity, and architectural precision matter.
 
-| page | covers |
+With SlateDeck, you declare slides with clean, structured parameters instead of hand-tuning CSS or fighting fragile layout boxes. A complete rebrand requires changing only a single theme parameter.
+
+---
+
+## Key Features
+
+- **Structured Slide Types**: 11 purpose-built slide kinds (`title`, `section`, `content`, `compare`, `stat`, `code`, `diagram`, `quote`, `team`, `image`, `closing`) designed for rapid authoring.
+- **Standalone Component Library**: Modular UI primitives including cards, multi-column grids, pull quotes, database ER tables, and stat counters.
+- **Built-in Architecture Diagramming**: Manual-placement node-and-edge diagram canvas with automatic elbow routing, row-level schema anchors, and zero external dependencies.
+- **Instant One-Line Theming**: Full-spectrum OKLCH color generation derived dynamically from a single hue value (`accent-hue`).
+- **1,750+ Bundled Icons**: Full [Lucide](https://lucide.dev) line icon set plus popular developer brand marks from [Simple Icons](https://simpleicons.org), with automatic sizing and baseline alignment.
+- **Precision Typography**: Bundled static weights of Archivo (Display), IBM Plex Sans (Body), and IBM Plex Mono (Code & Kickers) for reproducible offline rendering.
+
+---
+
+## Documentation Guide
+
+| Guide | Description |
 |---|---|
-| [getting-started.md](getting-started.md) | Install, compile, first deck, project layout |
-| [design-tokens.md](design-tokens.md) | Color, typography, spacing, the 1920×1080→960×540 coordinate system |
-| [slides.md](slides.md) | `slide(kind: "...")` — every slide kind and its parameters |
-| [components.md](components.md) | Standalone components (`icon`, `kicker`, `cols`, cards, `code-block`, `er-table`, ...) |
-| [diagram.md](diagram.md) | `diagram()` — node/edge placement, anchors, and the elbow-routing algorithm |
-| [icons-and-fonts.md](icons-and-fonts.md) | Icon families, adding new icons, vendored fonts |
+| [**Getting Started**](getting-started.md) | Package installation, compilation commands, watch mode, and building your first deck in under 2 minutes. |
+| [**Slide Kinds Reference**](slides.md) | Comprehensive parameter reference, layout previews, and code examples for all 11 built-in slide kinds. |
+| [**Components Reference**](components.md) | Standalone UI components (`numbered-grid`, `cols`, `compare-card`, `code-block`, `er-table`, etc.) for custom layouts. |
+| [**Diagrams & Architecture**](diagram.md) | Complete guide to creating system architectures, database schemas, and flowcharts with `diagram()`. |
+| [**Design Tokens & Theming**](design-tokens.md) | Color palette tokens, dynamic rebrand configuration, type scales, and spacing standards. |
+| [**Icons & Fonts**](icons-and-fonts.md) | Browsing the 1,750+ icon library, inline icon alignment, brand marks, and bundled typography. |
 
-## Gallery
+---
 
-Every image below is a real render (`typst compile`) of a full example deck in `examples/` — no
-design tool, no manual touch-up. `examples/mongodb.typ` is a ~10-slide technical talk built end
-to end on the public API; `examples/showcase.typ` demonstrates components reused outside their
-default slide kind and a live mid-deck rebrand. The per-kind reference gallery (every slide kind
-in isolation, including `image`/`quote`/`team`) is in [slides.md](slides.md).
+## Visual Showcase
+
+Every slide below is rendered natively by Typst using the SlateDeck public API:
 
 | | |
 |---|---|
-| ![Title slide, MongoDB deep dive deck](assets/gallery/mongodb-title.png) | ![Section divider, MongoDB deck](assets/gallery/mongodb-section.png) |
-| **`title`** — cover slide, accent bar, kicker, byline | **`section`** — full-accent divider between deck sections |
-| ![Content slide with two-column body and a syntax-highlighted code block](assets/gallery/mongodb-content.png) | ![Compare slide with a recommended option highlighted](assets/gallery/mongodb-compare.png) |
-| **`content`** — free-form body; here, an icon list beside `code-block()` | **`compare`** — two-column cards, recommended option highlighted |
-| ![Dark code slide with a syntax-highlighted MongoDB aggregation pipeline](assets/gallery/mongodb-code.png) | ![Stat slide with a large 17 hero number](assets/gallery/mongodb-stat.png) |
-| **`code`** — line-numbered, syntax-colored code block | **`stat`** — navy background, oversized hero number |
-| ![Grid of sixteen full-color brand-mark icons](assets/gallery/showcase-brand-icons.png) | ![Three compare-card components reused outside the compare slide kind](assets/gallery/showcase-compare-reuse.png) |
-| **`icon(brand: true)`** — full-color marks, any Lucide-shaped grid | **`compare-card()`** — a component, not just a slide kind, reused three-up |
-| ![Stat slide in a different accent color, proving the one-line rebrand](assets/gallery/showcase-rebrand-stat.png) | ![Closing slide, MongoDB deck](assets/gallery/mongodb-closing.png) |
-| **Live rebrand** — same `stat-hero()`, only `accent-hue` changed | **`closing`** — mirrors `title` on accent background |
+| ![Title Slide](assets/gallery/mongodb-title.png) | ![Section Divider](assets/gallery/mongodb-section.png) |
+| **`title`** — Cover slide with kicker, accent bar, and byline | **`section`** — Full-bleed accent divider between deck chapters |
+| ![Content Slide](assets/gallery/mongodb-content.png) | ![Comparison Slide](assets/gallery/mongodb-compare.png) |
+| **`content`** — Freeform body with multi-column grids and code blocks | **`compare`** — 2-column feature comparison with recommended highlight |
+| ![Code Slide](assets/gallery/mongodb-code.png) | ![Stat Slide](assets/gallery/mongodb-stat.png) |
+| **`code`** — Line-numbered syntax-highlighted code block with focus tints | **`stat`** — Oversized hero metric with adjacent description |
+| ![Brand Marks](assets/gallery/showcase-brand-icons.png) | ![Card Reuse](assets/gallery/showcase-compare-reuse.png) |
+| **`icon(brand: true)`** — Full-color developer and cloud logos | **Component Reuse** — Modular cards composed into custom 3-column grids |
+| ![Live Rebrand](assets/gallery/showcase-rebrand-stat.png) | ![Closing Slide](assets/gallery/mongodb-closing.png) |
+| **One-Line Rebrand** — Instant palette shift via `accent-hue` | **`closing`** — Matching accent-colored outro and contact slide |
 
-## How the package fits together
+---
 
+## Quick Example
+
+```typst
+#import "@local/slatedeck:0.1.0": *
+
+// 1. Initialize the deck theme and metadata
+#show: deck.with(
+  title: "Cloud Migration Strategy",
+  author: "Infrastructure Team",
+  accent-hue: 215deg, // Royal Blue
+)
+
+// 2. Cover Slide
+#slide(
+  kind: "title",
+  eyebrow: [Engineering Roadmap],
+  eyebrow-icon: "cloud",
+  title: [Modernizing our Core Platform],
+  subtitle: [A phased transition to event-driven serverless architecture.],
+  byline: ([Dev Team], [Platform Eng], [Q3 2026]),
+)
+
+// 3. Section Divider
+#slide(
+  kind: "section",
+  label: [Phase 01],
+  title: [Current Architecture & Bottlenecks],
+  progress: [01 / 04],
+)
+
+// 4. Content Slide with Numbered Grid
+#slide(
+  kicker: [Key Challenges],
+  title: [Three limitations of the legacy stack],
+  progress: [02 / 04],
+)[
+  #numbered-grid((
+    ([Monolithic Database], [Single point of failure during peak traffic spikes.]),
+    ([Coupled Deployments], [Coordinating releases requires cross-team synchronization.]),
+    ([High Latency], [Regional users experience 300ms+ roundtrip overhead.]),
+  ), columns: 3)
+]
 ```
-src/lib.typ            re-exports the public API (this is what #import pulls in)
-  ├─ page.typ           deck() — sets up the page, theme state, text defaults
-  ├─ theme.typ           color/type/spacing tokens, make-theme(accent-hue, accent-chroma)
-  ├─ slide.typ           slide(kind: "...") dispatcher — one function per slide kind
-  └─ components/         building blocks slide.typ composes, also usable standalone
-      ├─ icon.typ          SVG icon() — line icons + brand marks
-      ├─ kicker.typ         uppercase mono label
-      ├─ columns.typ        cols() / numbered-grid()
-      ├─ card.typ            compare-card() / team-card()
-      ├─ stat.typ             stat-hero()
-      ├─ quote.typ             pull-quote()
-      ├─ code.typ               code-block()
-      ├─ diagram.typ             diagram() — manual node/edge placement + routing
-      └─ er-table.typ             er-table() — DB schema table (used by diagram() too)
-```
 
-Everything reads its colors from a single piece of document state, `typeset-theme`
-(`theme.typ`), written once by `deck()` at the top of a document. That's what makes a rebrand a
-one-line change (`deck.with(accent-hue: 145deg)`) instead of a find-and-replace across every
-component.
+---
 
-## Design philosophy (why some things are the way they are)
+## The SlateDeck Philosophy
 
-- **Structured parameters, not markup parsing.** `slide()` takes named parameters
-  (`title:`, `kicker:`, ...), not a content block it introspects for headings. Typst has no
-  stable public API for querying node types inside a passed-in content tree, so parsing
-  `[= Headline\nSubtitle]` back into a title/subtitle pair would be fragile. See
-  [slides.md](slides.md).
-- **No auto-layout in `diagram()`.** Nodes are placed on an explicit `(col:, row:)` grid; there's
-  no graph solver. Edges get a small bounded search to route around *other* nodes, but this is a
-  handful of deterministic alternate routes, not pathfinding. See [diagram.md](diagram.md).
-- **Every component reads theme, none hardcode color.** If you're adding a component and reach
-  for a literal `oklch(...)` or hex value, that's almost always wrong — pull the token from
-  `typeset-theme.get()` instead (see [design-tokens.md](design-tokens.md)).
-- **Explicit vertical rhythm.** `deck()` zeros Typst's default paragraph/block spacing
-  (`set par(spacing: 0pt)`, `set block(spacing: 0pt)`); every component spaces itself with
-  explicit `v()` calls. Skipping this in a new component causes silent overflow onto a phantom
-  extra page rather than a compile error — see the "Gotchas" note in
-  [getting-started.md](getting-started.md#gotchas).
+1. **Declarative Over Imperative**: Declare *what* content belongs on a slide, not *where* to place every pixel.
+2. **Predictable Geometry**: Authored for standard 16:9 widescreen displays (960pt × 540pt), ensuring your slides look identical whether projected in an auditorium or viewed on a laptop.
+3. **Harmonious Color Theory**: By deriving all UI fills, borders, text contrasts, and highlight tones from OKLCH math, your presentations always maintain professional contrast ratios across light and dark slides.

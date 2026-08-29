@@ -96,9 +96,19 @@
   kicker: [Querying],
   kicker-icon: "terminal",
   title: [The aggregation pipeline: filter, reshape, group — in one call],
-  lang: "js",
-  code: "db.orders.aggregate([\n  { $match: { status: \"paid\" } },\n  { $group: {\n      _id: \"$customerId\",\n      total: { $sum: \"$amount\" }\n  }},\n  { $sort: { total: -1 } },\n  { $limit: 10 }\n])",
-)
+)[
+```js
+db.orders.aggregate([
+  { $match: { status: "paid" } },
+  { $group: {
+      _id: "$customerId",
+      total: { $sum: "$amount" }
+  }},
+  { $sort: { total: -1 } },
+  { $limit: 10 }
+])
+```
+]
 
 #slide(kicker: [Scaling], title: [Replica sets and sharding cover different problems])[
   #v(spacing.sm)

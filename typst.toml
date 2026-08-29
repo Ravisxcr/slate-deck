@@ -1,5 +1,5 @@
 [package]
-name = "typeset"
+name = "slatedeck"
 version = "0.1.0"
 entrypoint = "src/lib.typ"
 authors = ["Ravi"]

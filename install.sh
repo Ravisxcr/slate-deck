@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-# Installs (or reinstalls) this package into Typst's local package directory so any document on
-# this machine can `#import "@local/typeset:<version>": *` without a relative path.
-#
-# Reads name/version from typst.toml, copies typst.toml, src/, assets/, and README.md into the
-# Typst local package dir ($XDG_DATA_HOME/typst/packages/local/<name>/<version>/, or
-# ~/.local/share/... on Linux, ~/Library/Application Support/... on macOS), replacing whatever
-# was there before. Re-run this after every change to the package source -- the local package
-# dir is a build output, not a place to edit directly.
+# Installs SlateDeck into Typst's local package directory and installs the bundled fonts
+# so you can compile or watch decks directly without passing --font-path.
 
 set -euo pipefail
 
@@ -27,12 +21,15 @@ fi
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
   data_home="$HOME/Library/Application Support"
+  user_fonts_dir="$HOME/Library/Fonts"
 else
   data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+  user_fonts_dir="${XDG_DATA_HOME:-$HOME/.local/share}/fonts"
 fi
 
 target="$data_home/typst/packages/local/$name/$version"
 
+# 1. Install Typst local package
 rm -rf "$target"
 mkdir -p "$target"
 
@@ -42,10 +39,25 @@ for item in typst.toml src assets README.md; do
   fi
 done
 
-echo "Installed $name:$version -> $target"
+# 2. Install bundled fonts to user font directory
+mkdir -p "$user_fonts_dir"
+find "$root/assets/fonts" -type f -name "*.ttf" -exec cp {} "$user_fonts_dir/" \;
+
+if command -v fc-cache >/dev/null 2>&1; then
+  fc-cache -f "$user_fonts_dir" >/dev/null 2>&1 || true
+fi
+
+echo "============================================================"
+echo " SlateDeck ($name:$version) installed successfully!"
+echo "============================================================"
 echo ""
-echo "In any .typ file:"
+echo "• Package Path: $target"
+echo "• Fonts: Installed into $user_fonts_dir"
+echo ""
+echo "Usage in any .typ document:"
 echo "  #import \"@local/$name:$version\": *"
 echo ""
-echo "Compile decks with the bundled fonts on the font path, e.g.:"
-echo "  typst compile --font-path \"$target/assets/fonts\" deck.typ"
+echo "You can now compile or live-watch presentations with zero extra flags:"
+echo "  typst watch my-deck.typ my-deck.pdf"
+echo "  typst compile my-deck.typ my-deck.pdf"
+echo ""

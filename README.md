@@ -1,158 +1,110 @@
-# typeset
+# SlateDeck
 
-An opinionated Typst presentation package: strict grid, one accent color, and a small set of
-slide kinds and components that cover most corporate-update / dev-talk decks. Every slide is
-declared with structured parameters — no absolute positioning, no hand-tuned CSS — so a deck reads
-like a spec and rebrands with a one-line config change. See [docs/](docs/index.md) for the full
-design-token and API reference behind it.
+**SlateDeck** is a high-precision, opinionated presentation framework for [Typst](https://typst.app). Designed for developer talks, technical briefings, and executive updates, SlateDeck combines a strict typographic grid, automatic OKLCH color theming, and an integrated system architecture diagramming engine.
 
-`examples/demo.typ` is the spec — one example of every slide kind, in mockup order.
-`examples/showcase.typ` goes further: components reused outside their default slide kind, `icon()`
-at arbitrary sizes, native Typst markup inside a content body, and a live mid-deck rebrand via
-theme state.
+Every slide is declared with clean, structured parameters — no manual coordinate fiddling, no brittle CSS boxes, and complete one-line rebrands.
 
-## Gallery
+---
 
-Rendered straight from `examples/demo.typ` — no design tool, no manual touch-up.
+## Visual Gallery
+
+Rendered natively with Typst using the SlateDeck public API:
 
 | | |
 |---|---|
-| ![Title slide](examples/gallery/title.png) | ![Section divider](examples/gallery/section.png) |
-| **`title`** — cover slide, accent bar, kicker, byline | **`section`** — full-accent divider between deck sections |
-| ![Content slide](examples/gallery/content.png) | ![Compare slide](examples/gallery/compare.png) |
-| **`content`** — kicker, headline, numbered-grid body | **`compare`** — two-column cards, recommended option highlighted |
-| ![Stat slide](examples/gallery/stat.png) | ![Code slide](examples/gallery/code.png) |
-| **`stat`** — navy background, oversized hero number | **`code`** — line-numbered, syntax-colored code block |
-| ![Diagram slide](examples/gallery/diagram.png) | ![Closing slide](examples/gallery/closing.png) |
-| **`diagram`** — manual-placement node/edge architecture diagram | **`closing`** — mirrors `title` on accent background |
+| ![Title Slide](examples/gallery/title.png) | ![Section Divider](examples/gallery/section.png) |
+| **`title`** — Cover slide with kicker, accent bar, and byline | **`section`** — Full-bleed accent divider between chapters |
+| ![Content Slide](examples/gallery/content.png) | ![Compare Slide](examples/gallery/compare.png) |
+| **`content`** — Structured body with numbered cards or grids | **`compare`** — 2-column comparison with recommended highlight |
+| ![Stat Slide](examples/gallery/stat.png) | ![Code Slide](examples/gallery/code.png) |
+| **`stat`** — Oversized hero metric with adjacent description | **`code`** — Line-numbered syntax-highlighted code block |
+| ![Diagram Slide](examples/gallery/diagram.png) | ![Closing Slide](examples/gallery/closing.png) |
+| **`diagram`** — Manual-placement architecture & ER diagram | **`closing`** — Matching accent-colored outro & contact slide |
 
-## Install
+---
 
+## Quick Installation
+
+Run the local installer from the repository root:
+
+### Windows (PowerShell)
 ```powershell
 ./install.ps1
 ```
 
-or, on macOS/Linux:
-
+### macOS & Linux
 ```sh
+chmod +x ./install.sh
 ./install.sh
 ```
 
-Copies this package into `%LOCALAPPDATA%\typst\packages\local\typeset\0.1.0\`. Re-run it after
-any change to the package source. Any `.typ` file on the machine can then do:
+The installer automatically installs the package and **registers the bundled fonts** (Archivo, IBM Plex Sans, IBM Plex Mono) into your user profile.
+
+---
+
+## Quickstart Example
+
+Once installed, create your presentation file `my-deck.typ`:
 
 ```typst
-#import "@local/typeset:0.1.0": *
-```
+#import "@local/slatedeck:0.1.0": *
 
-Fonts (Archivo, IBM Plex Sans, IBM Plex Mono) are bundled but Typst does not auto-discover a
-package's own assets as fonts — compile with `--font-path` pointing at the installed package's
-`assets/fonts` folder:
-
-```sh
-typst compile --font-path "%LOCALAPPDATA%\typst\packages\local\typeset\0.1.0\assets\fonts" deck.typ
-```
-
-(`examples/demo.typ` in this repo instead imports `../src/lib.typ` directly and compiles against
-`assets/fonts` in-place, so you can iterate on the package without reinstalling for every change.)
-
-## Usage
-
-```typst
-#import "@local/typeset:0.1.0": *
-
-#show: deck.with(title: "Deck Title", accent-hue: 250deg)
-
-#slide(
-  kind: "title",
-  eyebrow: [My Package],
-  eyebrow-icon: "terminal",
-  title: [Slides that read like a spec.],
-  subtitle: [One line of positioning.],
-  byline: ([Your Name], [Team], [Jul 2026]),
+// 1. Initialize the deck theme and metadata
+#show: deck.with(
+  title: "Modernizing Core Infrastructure",
+  author: "Platform Engineering",
+  accent-hue: 250deg, // Royal Violet
 )
 
-#slide(kicker: [Why this matters], title: [Three problems])[
+// 2. Cover Slide
+#slide(
+  kind: "title",
+  eyebrow: [Platform Architecture],
+  eyebrow-icon: "terminal",
+  title: [Slides That Read Like a Spec],
+  subtitle: [A declarative Typst presentation framework for technical teams.],
+  byline: ([Jordan Reyes], [Platform Eng], [Q3 2026]),
+)
+
+// 3. Content Slide with Numbered Cards
+#slide(
+  kicker: [Design Principles],
+  title: [Three pillars of the new format],
+  progress: [02 / 04],
+)[
   #numbered-grid((
-    ([Problem one], [One line of detail.]),
-    ([Problem two], [One line of detail.]),
-  ))
+    ([Strict Layout Grid], [Eliminates manual alignment tweaks and broken offsets.]),
+    ([Native Code Blocks], [Syntax highlighting and line numbers rendered natively.]),
+    ([Instant Rebranding], [Derive the entire color scheme from a single hue value.]),
+  ), columns: 3)
 ]
 ```
 
-Rebrand by changing one argument: `deck.with(accent-hue: 145deg)` — every color token derives
-from `accent-hue`/`accent-chroma`.
+### Compile & Live Preview (Zero Extra Flags)
 
-## Slide kinds
+```sh
+# Live watch mode:
+typst watch my-deck.typ my-deck.pdf
 
-`slide(kind: "...", ..)` — omit `kind` for `"content"`.
+# Single compile:
+typst compile my-deck.typ my-deck.pdf
+```
 
-| kind | required/typical params | notes |
-|---|---|---|
-| `title` | `eyebrow`, `eyebrow-icon`, `title`, `subtitle`, `byline` | cover slide, accent bar down the left |
-| `section` | `label`, `title`, `blurb`, `progress` | full accent-color divider |
-| `content` (default) | `kicker`, `title`, body | kicker + headline + free-form body content |
-| `compare` | `kicker`, `title`, `left`, `right` | each of `left`/`right` is `(label:, title:, items:, recommended:)` |
-| `stat` | `kicker`, `value`, `caption`, `note` | navy background, oversized number |
-| `image` | `image`, `caption-title`, `caption-body` | full-bleed, `image` is any content (an `image()` call or placeholder box) |
-| `code` | `kicker`, `kicker-icon`, `title`, `code`, `lang` | navy background, line-numbered, syntax-colored via Typst's built-in `raw` highlighting |
-| `diagram` | `kicker`, `kicker-icon`, `title`, `nodes`, `edges`, `cols`, `rows`, `theme` | manual-placement node/edge diagram — architecture, flowcharts, ER diagrams |
-| `quote` | `quote`, `name`, `role` | vertically centered pull-quote |
-| `team` | `kicker`, `title`, `members`, `columns` | `members` is an array of `(name:, role:)` |
-| `closing` | `title`, `subtitle`, `footer` | mirrors `title`, accent background |
+---
 
-Every kind accepts `progress` (except `title`/`closing`) for a bottom-right "N / total" marker.
+## Full Documentation
 
-## Components
+Explore the complete **Public Reference Manual** in [**docs/**](docs/index.md):
 
-Usable directly inside a `content`-kind slide body:
+- [**Getting Started**](docs/getting-started.md) — Installation, compilation, live watch mode, and best practices.
+- [**Slide Kinds Reference**](docs/slides.md) — Comprehensive parameter tables and examples for all 11 built-in slide types.
+- [**Components Reference**](docs/components.md) — Standalone cards, grids, metrics, pull-quotes, and schema tables.
+- [**Diagrams Guide**](docs/diagram.md) — System architecture, cloud topologies, and database ER diagrams.
+- [**Design Tokens & Theming**](docs/design-tokens.md) — Dynamic color palette derivation, type scale, and spacing.
+- [**Icons & Fonts**](docs/icons-and-fonts.md) — 1,750+ Lucide icons, developer brand marks, and typography setup.
 
-- `icon(name, size: 1em, color: none, brand: false)` — line icon from `assets/icons/line/`, or
-  `brand: true` for a full-color mark from `assets/icons/brand/`. Sizes/baseline-aligns to
-  surrounding text.
-- `kicker(body)` — uppercase, letter-spaced mono label in the accent color.
-- `cols(items, columns: 2)` — generic N-up grid.
-- `numbered-grid(items, columns: 2)` — the "01 / 02 / 03 / 04" numbered-bullet layout.
-- `compare-card(label, title, items, recommended: false)`, `team-card(name, role)`,
-  `stat-hero(value, caption)`, `pull-quote(body, name, role)`, `code-block(body, lang: "typ")` —
-  the pieces each slide kind is built from, usable standalone if you need a custom layout.
-- `diagram(nodes, edges: (), cols:, rows:, cell:, gutter:, theme: "light")` — manual-placement
-  node/edge diagram. Nodes sit on an explicit `(col:, row:)` grid (0-indexed) and render as either
-  an icon+label box (`kind: "box"`, default) or a schema table (`kind: "table"`, via `er-table()`).
-  Edges reference node ids (or `(id:, row:)` for a row-level anchor into a table node) and draw as
-  straight or right-angle elbow connectors, with optional arrowheads, dashing, and labels. No
-  auto-layout — you place every node explicitly, same philosophy as the rest of the package.
-- `er-table(name, columns, width:, height: auto, accent: false)` — standalone DB/ER schema table
-  (header bar + one row per column, with a key icon for `key: "pk"`/`"fk"` columns). Used by
-  `diagram()` for table nodes, but usable directly in any content slide too.
+---
 
-## Icons
+## License
 
-- Line icons: `assets/icons/line/*.svg`, the full [Lucide](https://lucide.dev) icon set (~1750
-  SVGs, ISC license, see `assets/icons/line/LICENSE`) — any Lucide name works out of the box.
-- Brand marks: `assets/icons/brand/*.svg`, from [Simple Icons](https://simpleicons.org) (CC0, see
-  `assets/icons/brand/LICENSE.md`), recolored via `assets/icons/brand/colors.typ`.
-
-Add more line icons by dropping a `kebab-case.svg` (with `stroke="currentColor"`) into
-`assets/icons/line/` — no code change needed. Add brand marks the same way in `assets/icons/brand/`
-plus a hex entry in `colors.typ`.
-
-## Fonts
-
-Archivo (500/600/700/800), IBM Plex Sans (400/500/600), IBM Plex Mono (400/500/600) — all
-OFL-1.1, vendored as static weights under `assets/fonts/` (Typst 0.14 doesn't render variable
-fonts correctly, so no single variable-font file is used). See each family's `OFL.txt` for
-license text.
-
-## Full docs
-
-This README is the quick-start. For the complete reference — every slide kind's parameter table,
-every component's API, the `diagram()` routing algorithm, and the full design-token list — see
-[**docs/**](docs/index.md):
-
-- [docs/getting-started.md](docs/getting-started.md) — install, compile, gotchas
-- [docs/design-tokens.md](docs/design-tokens.md) — color, typography, spacing, coordinate system
-- [docs/slides.md](docs/slides.md) — every `slide(kind: "...")` and its parameters
-- [docs/components.md](docs/components.md) — standalone components
-- [docs/diagram.md](docs/diagram.md) — `diagram()` node/edge placement and routing
-- [docs/icons-and-fonts.md](docs/icons-and-fonts.md) — icon families, adding icons, vendored fonts
+MIT © Ravi
