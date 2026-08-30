@@ -2,6 +2,8 @@
 
 **SlateDeck** is a high-precision, opinionated presentation framework for [Typst](https://typst.app). Designed for developer talks, technical briefings, and executive updates, SlateDeck combines a strict typographic grid, automatic OKLCH color theming, and an integrated system architecture diagramming engine.
 
+📖 **Documentation**: [https://ravisxcr.github.io/slate-deck/](https://ravisxcr.github.io/slate-deck/)
+
 Every slide is declared with clean, structured parameters — no manual coordinate fiddling, no brittle CSS boxes, and complete one-line rebrands.
 
 ---
@@ -53,7 +55,7 @@ Once installed, create your presentation file `my-deck.typ`:
 #show: deck.with(
   title: "Modernizing Core Infrastructure",
   author: "Platform Engineering",
-  accent-hue: 250deg, // Royal Violet
+  accent: rgb("#6f789a"), // Or hex string "#6f789a", or accent-hue: 250deg
 )
 
 // 2. Cover Slide
@@ -94,7 +96,7 @@ typst compile my-deck.typ my-deck.pdf
 
 ## Full Documentation
 
-Explore the complete **Public Reference Manual** in [**docs/**](docs/index.md):
+Explore the complete **Public Reference Manual** online at [**https://ravisxcr.github.io/slate-deck/**](https://ravisxcr.github.io/slate-deck/) or browse the guides in [**docs/**](docs/index.md):
 
 - [**Getting Started**](docs/getting-started.md) — Installation, compilation, live watch mode, and best practices.
 - [**Slide Kinds Reference**](docs/slides.md) — Comprehensive parameter tables and examples for all 11 built-in slide types.

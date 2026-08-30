@@ -8,14 +8,14 @@ Every color, font weight, type size, and vertical margin is declared as a reusab
 
 ## 1. The One-Line Rebrand System
 
-Instead of editing dozens of hex colors across individual slides, SlateDeck generates its entire palette dynamically from a single **accent hue angle** using the native OKLCH perceptual color space:
+Instead of editing dozens of hex colors across individual slides, SlateDeck generates its entire palette dynamically from your chosen **accent color** (in standard RGB/Hex notation or hue angle) using the native OKLCH perceptual color space:
 
 ```typst
 #show: deck.with(
   title: "MongoDB Architecture",
   author: "Ravi",
-  accent-hue: 140deg,   // Forest / Emerald Green
-  accent-chroma: 0.16,  // Accent saturation level (default: 0.16)
+  accent: rgb("#00ED64"), // Hex/RGB notation or hex string "#00ED64"
+  // accent-hue: 140deg,  // Hue angle notation is also fully supported
 )
 ```
 
@@ -25,8 +25,9 @@ Instead of editing dozens of hex colors across individual slides, SlateDeck gene
 |---|---|---|---|
 | `title` | `string` | `none` | Document title for PDF export metadata (`document.title`). |
 | `author` | `string` | `none` | Author / organization for PDF metadata (`document.author`). |
-| `accent-hue` | `angle` | `250deg` | Base hue angle generating all accent and tinted color tokens. |
-| `accent-chroma` | `float` | `0.16` | Perceptual chroma / saturation intensity of the accent color. |
+| `accent` | `color` / `str` / `angle` | `auto` | Primary deck accent. Accepts `rgb("#6f789a")`, hex string `"#6f789a"`, or angle `140deg`. |
+| `accent-hue` | `angle` / `color` / `str` | `250deg` | Base hue angle or color generating all accent and tinted color tokens. |
+| `accent-chroma` | `float` | `auto` (0.16) | Perceptual chroma / saturation intensity of the accent color (auto-derived when using RGB colors). |
 
 ### Popular Brand Hue Presets
 

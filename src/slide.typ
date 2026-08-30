@@ -3,20 +3,34 @@
 #import "components/icon.typ": icon
 #import "components/columns.typ": cols, numbered-grid
 #import "components/card.typ": compare-card, team-card
-#import "components/stat.typ": stat-hero
+#import "components/stat.typ": stat-hero, stat-grid
 #import "components/quote.typ": pull-quote
 #import "components/code.typ": code-block
 #import "components/diagram.typ": diagram
 
 #let _footer-progress(progress, fill) = {
-  if progress != none {
+  let auto-prog = typeset-progress.get()
+  let show-auto = (progress == true) or (progress == none and auto-prog == true)
+  if show-auto {
+    let cur = counter(page).get().first()
+    let tot = counter(page).final().first()
+    let digits = calc.max(2, str(tot).len())
+    let pad(n) = {
+      let s = str(n)
+      "0" * calc.max(0, digits - s.len()) + s
+    }
+    let label = pad(cur) + " / " + pad(tot)
+    place(bottom + right, dx: -spacing.page-x, dy: -spacing.page-y)[
+      #text(font: fonts.mono, size: type-scale.number, fill: fill)[#label]
+    ]
+  } else if progress != none and progress != false {
     place(bottom + right, dx: -spacing.page-x, dy: -spacing.page-y)[
       #text(font: fonts.mono, size: type-scale.number, fill: fill)[#progress]
     ]
   }
 }
 
-#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: ()) = context {
+#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: (), progress: none) = context {
   let t = typeset-theme.get()
   page(fill: t.paper)[
     #place(top + left, dx: 0pt, dy: 0pt)[
@@ -57,6 +71,7 @@
         )
       ]
     }
+    #_footer-progress(progress, t.ink-faint)
   ]
 }
 
@@ -130,6 +145,12 @@
   kicker-icon: none,
   value: none,
   caption: none,
+  stats: (),
+  columns: auto,
+  direction: "row",
+  size: auto,
+  row-gutter: auto,
+  column-gutter: auto,
   note: none,
   theme: "light",
   color: none,
@@ -173,6 +194,25 @@
     t.ink-faint
   }
   let stat-on = if is-dark { "navy" } else if is-accent { "accent" } else { "paper" }
+
+  let normalized-stats = if stats.len() > 0 {
+    stats
+  } else if value != none {
+    ((value: value, caption: caption),)
+  } else {
+    ()
+  }
+
+  let is-single = normalized-stats.len() == 1 and columns == auto and size == auto
+
+  let top-v-gap = if is-single {
+    spacing.xxl
+  } else if normalized-stats.len() <= 2 {
+    spacing.xl
+  } else {
+    spacing.lg
+  }
+
   page(fill: page-bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
@@ -188,8 +228,28 @@
           text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
         }
       ]
-      #v(spacing.xxl)
-      #stat-hero(value, caption, on: stat-on)
+      #v(top-v-gap)
+      #if is-single {
+        let s = normalized-stats.at(0)
+        let (val, cap) = if type(s) == dictionary {
+          (s.at("value", default: s.at("val", default: "")), s.at("caption", default: s.at("cap", default: "")))
+        } else if type(s) == array {
+          (s.at(0, default: ""), s.at(1, default: ""))
+        } else {
+          (s, "")
+        }
+        stat-hero(val, cap, on: stat-on)
+      } else {
+        stat-grid(
+          normalized-stats,
+          columns: columns,
+          direction: direction,
+          on: stat-on,
+          size: size,
+          row-gutter: row-gutter,
+          column-gutter: column-gutter,
+        )
+      }
     ]
     #if note != none {
       place(bottom + left, dx: spacing.page-x, dy: -spacing.xl)[
@@ -365,7 +425,7 @@
   ]
 }
 
-#let _closing-slide(title: none, subtitle: none, footer: none) = context {
+#let _closing-slide(title: none, subtitle: none, footer: none, progress: none) = context {
   let t = typeset-theme.get()
   page(fill: t.accent)[
     #place(top + left, dx: spacing.page-x, dy: 200pt)[
@@ -382,6 +442,7 @@
         #text(font: fonts.mono, size: type-scale.number, fill: t.on-accent)[#footer]
       ]
     }
+    #_footer-progress(progress, t.on-accent-muted)
   ]
 }
 

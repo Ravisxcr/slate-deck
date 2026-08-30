@@ -16,7 +16,12 @@ Every slide is authored using the unified `#slide(...)` function:
 ```
 
 !!! note "Progress Indicator"
-    Every slide kind (except `title` and `closing`) accepts the optional `progress:` parameter, rendering an elegant monospace progress counter in the bottom-right corner (e.g. `progress: [03 / 12]`).
+    Slide progress can be enabled globally via `#show: deck.with(progress: true)` to automatically compute and render monospace counters in the bottom-right corner (e.g. `03 / 12`).
+    
+    You can also control progress per slide using the `progress:` parameter:
+    - `progress: false` — explicitly hides the progress counter on that slide (useful for section dividers or intro slides).
+    - `progress: true` — forces automatic progress rendering on that slide.
+    - `progress: [03 / 12]` — supplies a custom progress marker.
 
 ---
 
@@ -156,26 +161,32 @@ A structured two-column comparison layout. Each column is rendered as a clean bo
 
 ---
 
-## 5. `stat` — Key Metric Hero
+## 5. `stat` — Key Metric Hero & Multi-Stat Grid
 
 ![Stat Slide](assets/gallery/stat.png)
 
-A high-impact metric slide featuring an oversized hero number (170pt display font) paired with a bold caption and optional explanatory footnote.
+A high-impact metric slide featuring either a single oversized hero number (170pt display font) or a multi-stat grid (2, 3, 4, or more stats) arranged across customizable columns and flow directions.
 
 ### Parameters
 
 | Parameter | Type | Default | Required? | Description |
 |---|---|---|---|---|
-| `value` | `content` | `none` | **Yes** | Large metric value or key stat (e.g. `[6x]`, `[99.9%]`, `[45ms]`). |
-| `caption` | `content` | `none` | **Yes** | Bold description rendered directly adjacent to the number. |
+| `value` | `content` | `none` | Optional* | Large metric value for single-stat mode (e.g. `[6x]`, `[99.9%]`). |
+| `caption` | `content` | `none` | Optional* | Bold description rendered adjacent to the number. |
+| `stats` | `array` | `()` | Optional* | Array of stat pairs `(([val], [cap]), ...)` or dictionaries `((value: [..], caption: [..]), ...)`. |
+| `columns` | `int` or `auto` | `auto` | Optional | Number of columns in multi-stat mode (default `auto` adapts to stat count). |
+| `direction` | `string` | `"row"` | Optional | Flow order: `"row"` (left-to-right across rows) or `"column"` (top-to-bottom per column). |
+| `size` | `string` or `length` | `auto` | Optional | Metric size preset: `"hero"` (170pt), `"lg"` (88pt), `"md"` (64pt), `"sm"` (46pt), or custom length. |
 | `kicker` | `content` | `none` | Optional | Top mono label. |
 | `kicker-icon` | `string` | `none` | Optional | Lucide icon name for kicker. |
 | `theme` | `string` | `"light"` | Optional | Color scheme: `"light"` (paper), `"dark"` (navy), or `"accent"`. |
 | `fill` | `color` | `none` | Optional | Custom background fill color override. |
 | `note` | `content` | `none` | Optional | Footnote or source citation anchored at the bottom-left. |
-| `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
+| `progress` | `bool` or `content` | `none` | Optional | Progress marker override (`true`, `false`, or custom content). |
 
-### Exact Code for Above Slide
+*\* Either provide `value` + `caption` for a single hero stat, or pass an array of items to `stats`.*
+
+### Single-Stat Example
 
 ```typst
 #slide(
@@ -185,6 +196,25 @@ A high-impact metric slide featuring an oversized hero number (170pt display fon
   caption: [faster from outline to reviewed deck],
   note: [Measured across 14 decks migrated from slideware to the package, Q2 2026.],
   progress: [05 / 10],
+)
+```
+
+### Multi-Stat Grid Example
+
+```typst
+#slide(
+  kind: "stat",
+  kicker: [Platform Performance],
+  kicker-icon: "activity",
+  stats: (
+    ([17], [years in production since launch]),
+    ([99.99%], [uptime across managed clusters]),
+    ([10M+], [active database deployments]),
+    ([200+], [countries with daily active users]),
+  ),
+  columns: 2,
+  direction: "column", // Fills left column first, then right column
+  note: [Global telemetry metrics measured across Q2 2026 production clusters.],
 )
 ```
 

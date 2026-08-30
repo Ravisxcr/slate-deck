@@ -11,7 +11,7 @@ With SlateDeck, you declare slides with clean, structured parameters instead of 
 - **Structured Slide Types**: 11 purpose-built slide kinds (`title`, `section`, `content`, `compare`, `stat`, `code`, `diagram`, `quote`, `team`, `image`, `closing`) designed for rapid authoring.
 - **Standalone Component Library**: Modular UI primitives including cards, multi-column grids, pull quotes, database ER tables, and stat counters.
 - **Built-in Architecture Diagramming**: Manual-placement node-and-edge diagram canvas with automatic elbow routing, row-level schema anchors, and zero external dependencies.
-- **Instant One-Line Theming**: Full-spectrum OKLCH color generation derived dynamically from a single hue value (`accent-hue`).
+- **Instant One-Line Theming**: Full-spectrum OKLCH color generation derived dynamically from a single RGB/Hex color (`accent: rgb("#6f789a")` / `accent: "#6f789a"`) or hue angle (`accent-hue: 250deg`).
 - **1,750+ Bundled Icons**: Full [Lucide](https://lucide.dev) line icon set plus popular developer brand marks from [Simple Icons](https://simpleicons.org), with automatic sizing and baseline alignment.
 - **Precision Typography**: Bundled static weights of Archivo (Display), IBM Plex Sans (Body), and IBM Plex Mono (Code & Kickers) for reproducible offline rendering.
 
