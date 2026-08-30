@@ -3,7 +3,7 @@
 #import "../src/lib.typ": *
 #import "../src/theme.typ": typeset-theme
 
-#show: deck.with(title: "MongoDB", author: "Ravi", accent-hue: 140deg, progress: true)
+#show: deck.with(title: "MongoDB", author: "Ravi", accent: rgb("#1d178b"), progress: true)
 
 #slide(
   kind: "title",
@@ -186,7 +186,7 @@
     ([17], [years in production since MongoDB's 2009 launch]),
     ([10M+], [active database deployments globally]),
   ),
-  columns: 2,
+  columns: 1,
   note: [Not a new bet — GA'd out of 10gen in 2009, now on major version 8.x with decades of combined operational experience behind it.],
 )
 

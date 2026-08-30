@@ -138,8 +138,8 @@ Always place the `#show: deck.with(...)` rule at the very top of your document. 
 #show: deck.with(
   title: "MongoDB Deep Dive",
   author: "Ravi",
-  accent-hue: 140deg,   // Emerald / Forest green accent
-  accent-chroma: 0.16,  // Optional saturation override (default: 0.16)
+  accent: rgb("#00ED64"), // Familiar RGB or Hex notation (e.g. "#00ED64", rgb("#6f789a"))
+  // accent-hue: 140deg,  // Hue angle notation is also fully supported
 )
 ```
 
@@ -149,8 +149,9 @@ Always place the `#show: deck.with(...)` rule at the very top of your document. 
 |---|---|---|---|
 | `title` | `string` | `none` | Presentation title embedded into PDF metadata (`document.title`). |
 | `author` | `string` | `none` | Author / team name embedded into PDF metadata (`document.author`). |
-| `accent-hue` | `angle` | `250deg` | Base hue angle in degrees for the deck's primary accent color. |
-| `accent-chroma` | `float` | `0.16` | Perceptual chroma / saturation intensity of the accent color in OKLCH space. |
+| `accent` | `color` / `str` / `angle` | `auto` | Primary deck accent. Accepts `rgb("#6f789a")`, hex string `"#6f789a"`, or angle `140deg`. |
+| `accent-hue` | `angle` / `color` / `str` | `250deg` | Base hue angle or color generating all accent and tinted color tokens. |
+| `accent-chroma` | `float` | `auto` (0.16) | Perceptual chroma / saturation intensity of the accent color in OKLCH space. |
 | `progress` | `bool` | `false` | When `true`, automatically renders slide progress (e.g. `01 / 10`) on all slides across the deck. |
 
 #### Popular Brand Hue Presets
