@@ -15,9 +15,10 @@ In addition to full-slide layouts, SlateDeck provides a library of **modular UI 
 | [`compare-card()`](#5-compare-card) | Structured feature/option card with optional accent recommendation highlight. |
 | [`team-card()`](#6-team-card) | Team member card with avatar placeholder, name, and role. |
 | [`stat-hero()`](#7-stat-hero) | Oversized hero number paired with adjacent bold caption. |
-| [`pull-quote()`](#8-pull-quote) | Formatted testimonial with accent rule and author attribution. |
-| [`code-block()`](#9-code-block) | Syntax-highlighted code block with line numbering and row highlights. |
-| [`er-table()`](#10-er-table) | Database / ER schema table with column types and primary/foreign key badges. |
+| [`stat-grid()`](#8-stat-grid) | Multi-stat metric grid with configurable columns and flow direction. |
+| [`pull-quote()`](#9-pull-quote) | Formatted testimonial with accent rule and author attribution. |
+| [`code-block()`](#10-code-block) | Syntax-highlighted code block with line numbering and row highlights. |
+| [`er-table()`](#11-er-table) | Database / ER schema table with column types and primary/foreign key badges. |
 
 ---
 
@@ -87,7 +88,7 @@ Renders the signature "01 / 02 / 03 / 04" indexed cards: large accent numbers pa
 
 ### Signature
 ```typst
-#numbered-grid(items, columns: 2, row-gutter: 34pt, column-gutter: 56pt)
+#numbered-grid(items, columns: 2, direction: "row", row-gutter: 34pt, column-gutter: 56pt)
 ```
 
 ### Parameters
@@ -96,6 +97,7 @@ Renders the signature "01 / 02 / 03 / 04" indexed cards: large accent numbers pa
 |---|---|---|---|
 | `items` | `array` | *Positional* | Array of `(title, description)` tuples or 2-element arrays. |
 | `columns` | `int` | `2` | Number of columns in the grid. |
+| `direction` | `string` | `"row"` | Flow order: `"row"` (left-to-right across rows) or `"column"` (top-to-bottom per column). |
 | `row-gutter` | `length` | `34pt` | Vertical spacing between rows. |
 | `column-gutter` | `length` | `56pt` | Horizontal spacing between columns. |
 
@@ -108,7 +110,7 @@ Renders the signature "01 / 02 / 03 / 04" indexed cards: large accent numbers pa
     ([Distributed Tracing], [Instrument OpenTelemetry spans across all microservices.]),
     ([Automated Canary], [Deploy rollouts with automated latency-regression rollback.]),
     ([Cost Optimization], [Migrate background workers to spot compute instances.]),
-  ), columns: 2)
+  ), columns: 2, direction: "column")
 ]
 ```
 
@@ -120,7 +122,7 @@ A generic N-column grid helper for arranging any collection of content blocks, c
 
 ### Signature
 ```typst
-#cols(items, columns: 2, row-gutter: 34pt, column-gutter: 56pt)
+#cols(items, columns: 2, direction: "row", row-gutter: 34pt, column-gutter: 56pt)
 ```
 
 ### Parameters
@@ -129,6 +131,7 @@ A generic N-column grid helper for arranging any collection of content blocks, c
 |---|---|---|---|
 | `items` | `array` | *Positional* | Array of content blocks to place into grid cells. |
 | `columns` | `int` | `2` | Number of columns across the grid. |
+| `direction` | `string` | `"row"` | Flow order: `"row"` (left-to-right) or `"column"` (top-to-bottom per column). |
 | `row-gutter` | `length` | `34pt` | Vertical spacing between rows. |
 | `column-gutter` | `length` | `56pt` | Horizontal spacing between columns. |
 
@@ -209,11 +212,11 @@ Renders a structured team card with a dashed photo placeholder block, prominent 
 
 ## 7. `stat-hero()`
 
-Displays an oversized metric value (170pt display font) paired with an adjacent bold caption.
+Displays a metric value (170pt hero display font or custom size) paired with an adjacent bold caption.
 
 ### Signature
 ```typst
-#stat-hero(value, caption, on: "paper")
+#stat-hero(value, caption, on: "paper", size: auto)
 ```
 
 ### Parameters
@@ -223,6 +226,7 @@ Displays an oversized metric value (170pt display font) paired with an adjacent 
 | `value` | `content` | *Positional* | Big number or metric (e.g. `[10x]`, `[99.99%]`). |
 | `caption` | `content` | *Positional* | Bold accompanying description text. |
 | `on` | `string` | `"paper"` | Background mode: `"paper"` (dark text), `"navy"` / `"dark"` (light text), or `"accent"`. |
+| `size` | `string` or `length` | `auto` | Size preset: `"hero"` (170pt), `"lg"` (88pt), `"md"` (64pt), `"sm"` (46pt), or custom length. |
 
 ### Example
 
@@ -234,7 +238,41 @@ Displays an oversized metric value (170pt display font) paired with an adjacent 
 
 ---
 
-## 8. `pull-quote()`
+## 8. `stat-grid()`
+
+Renders a grid of multiple metrics arranged across columns with customizable flow direction.
+
+### Signature
+```typst
+#stat-grid(stats, columns: auto, direction: "row", on: "paper", size: auto)
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `stats` | `array` | *Positional* | Array of stat pairs `(([val], [cap]), ...)` or dictionaries `((value: [..], caption: [..]), ...)`. |
+| `columns` | `int` or `auto` | `auto` | Number of columns in the grid (defaults to `auto` based on count). |
+| `direction` | `string` | `"row"` | Flow order: `"row"` (left-to-right) or `"column"` (top-to-bottom per column). |
+| `on` | `string` | `"paper"` | Background mode: `"paper"`, `"navy"`, or `"accent"`. |
+| `size` | `string` or `length` | `auto` | Metric display size (`"hero"`, `"lg"`, `"md"`, `"sm"`). |
+
+### Example
+
+```typst
+#slide(kicker: [Scale], title: [Global Infrastructure Metrics])[
+  #stat-grid((
+    ([17], [years in production]),
+    ([99.99%], [uptime SLA]),
+    ([10M+], [active clusters]),
+    ([200+], [regions worldwide]),
+  ), columns: 2, direction: "column")
+]
+```
+
+---
+
+## 9. `pull-quote()`
 
 A testimonial pull-quote with a prominent accent rule, large quote typography (32pt), and an author badge with name and role.
 
@@ -263,7 +301,7 @@ A testimonial pull-quote with a prominent accent rule, large quote typography (3
 
 ---
 
-## 9. `code-block()`
+## 10. `code-block()`
 
 A line-numbered, syntax-highlighted code container with row highlighting and theme toggling.
 
@@ -302,7 +340,7 @@ A line-numbered, syntax-highlighted code container with row highlighting and the
 
 ---
 
-## 10. `er-table()`
+## 11. `er-table()`
 
 A standalone database / ER schema table displaying a stylized table header, column names, data types, and primary/foreign key badges.
 

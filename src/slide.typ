@@ -3,7 +3,7 @@
 #import "components/icon.typ": icon
 #import "components/columns.typ": cols, numbered-grid
 #import "components/card.typ": compare-card, team-card
-#import "components/stat.typ": stat-hero
+#import "components/stat.typ": stat-hero, stat-grid
 #import "components/quote.typ": pull-quote
 #import "components/code.typ": code-block
 #import "components/diagram.typ": diagram
@@ -145,6 +145,12 @@
   kicker-icon: none,
   value: none,
   caption: none,
+  stats: (),
+  columns: auto,
+  direction: "row",
+  size: auto,
+  row-gutter: auto,
+  column-gutter: auto,
   note: none,
   theme: "light",
   color: none,
@@ -188,6 +194,25 @@
     t.ink-faint
   }
   let stat-on = if is-dark { "navy" } else if is-accent { "accent" } else { "paper" }
+
+  let normalized-stats = if stats.len() > 0 {
+    stats
+  } else if value != none {
+    ((value: value, caption: caption),)
+  } else {
+    ()
+  }
+
+  let is-single = normalized-stats.len() == 1 and columns == auto and size == auto
+
+  let top-v-gap = if is-single {
+    spacing.xxl
+  } else if normalized-stats.len() <= 2 {
+    spacing.xl
+  } else {
+    spacing.lg
+  }
+
   page(fill: page-bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
@@ -203,8 +228,28 @@
           text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
         }
       ]
-      #v(spacing.xxl)
-      #stat-hero(value, caption, on: stat-on)
+      #v(top-v-gap)
+      #if is-single {
+        let s = normalized-stats.at(0)
+        let (val, cap) = if type(s) == dictionary {
+          (s.at("value", default: s.at("val", default: "")), s.at("caption", default: s.at("cap", default: "")))
+        } else if type(s) == array {
+          (s.at(0, default: ""), s.at(1, default: ""))
+        } else {
+          (s, "")
+        }
+        stat-hero(val, cap, on: stat-on)
+      } else {
+        stat-grid(
+          normalized-stats,
+          columns: columns,
+          direction: direction,
+          on: stat-on,
+          size: size,
+          row-gutter: row-gutter,
+          column-gutter: column-gutter,
+        )
+      }
     ]
     #if note != none {
       place(bottom + left, dx: spacing.page-x, dy: -spacing.xl)[

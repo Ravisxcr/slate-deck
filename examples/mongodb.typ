@@ -181,9 +181,12 @@
 
 #slide(
   kind: "stat",
-  kicker: [Maturity],
-  value: [17],
-  caption: [years in production since MongoDB's 2009 open-source launch],
+  kicker: [Maturity & Scale],
+  stats: (
+    ([17], [years in production since MongoDB's 2009 launch]),
+    ([10M+], [active database deployments globally]),
+  ),
+  columns: 2,
   note: [Not a new bet — GA'd out of 10gen in 2009, now on major version 8.x with decades of combined operational experience behind it.],
 )
 
