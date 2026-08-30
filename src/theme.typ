@@ -53,3 +53,4 @@
 )
 
 #let typeset-theme = state("typeset-theme", make-theme())
+#let typeset-progress = state("typeset-progress", false)

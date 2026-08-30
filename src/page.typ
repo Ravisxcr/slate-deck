@@ -9,6 +9,7 @@
   author: none,
   accent-hue: 250deg,
   accent-chroma: 0.16,
+  progress: false,
   body,
 ) = {
   let built = make-theme(accent-hue: accent-hue, accent-chroma: accent-chroma)
@@ -22,5 +23,6 @@
   set par(leading: 0.62em, spacing: 0pt)
   set block(spacing: 0pt)
   typeset-theme.update(built)
+  typeset-progress.update(progress)
   body
 }

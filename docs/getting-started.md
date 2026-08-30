@@ -151,6 +151,7 @@ Always place the `#show: deck.with(...)` rule at the very top of your document. 
 | `author` | `string` | `none` | Author / team name embedded into PDF metadata (`document.author`). |
 | `accent-hue` | `angle` | `250deg` | Base hue angle in degrees for the deck's primary accent color. |
 | `accent-chroma` | `float` | `0.16` | Perceptual chroma / saturation intensity of the accent color in OKLCH space. |
+| `progress` | `bool` | `false` | When `true`, automatically renders slide progress (e.g. `01 / 10`) on all slides across the deck. |
 
 #### Popular Brand Hue Presets
 

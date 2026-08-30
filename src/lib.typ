@@ -9,7 +9,7 @@
 #import "components/code.typ": code-block
 #import "components/diagram.typ": diagram
 #import "components/er-table.typ": er-table
-#import "theme.typ": typeset-theme, spacing, type-scale, fonts
+#import "theme.typ": typeset-theme, typeset-progress, spacing, type-scale, fonts
 
 #let typeset = (
   deck: deck,

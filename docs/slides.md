@@ -16,7 +16,12 @@ Every slide is authored using the unified `#slide(...)` function:
 ```
 
 !!! note "Progress Indicator"
-    Every slide kind (except `title` and `closing`) accepts the optional `progress:` parameter, rendering an elegant monospace progress counter in the bottom-right corner (e.g. `progress: [03 / 12]`).
+    Slide progress can be enabled globally via `#show: deck.with(progress: true)` to automatically compute and render monospace counters in the bottom-right corner (e.g. `03 / 12`).
+    
+    You can also control progress per slide using the `progress:` parameter:
+    - `progress: false` — explicitly hides the progress counter on that slide (useful for section dividers or intro slides).
+    - `progress: true` — forces automatic progress rendering on that slide.
+    - `progress: [03 / 12]` — supplies a custom progress marker.
 
 ---
 

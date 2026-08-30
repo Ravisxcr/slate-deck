@@ -9,14 +9,28 @@
 #import "components/diagram.typ": diagram
 
 #let _footer-progress(progress, fill) = {
-  if progress != none {
+  let auto-prog = typeset-progress.get()
+  let show-auto = (progress == true) or (progress == none and auto-prog == true)
+  if show-auto {
+    let cur = counter(page).get().first()
+    let tot = counter(page).final().first()
+    let digits = calc.max(2, str(tot).len())
+    let pad(n) = {
+      let s = str(n)
+      "0" * calc.max(0, digits - s.len()) + s
+    }
+    let label = pad(cur) + " / " + pad(tot)
+    place(bottom + right, dx: -spacing.page-x, dy: -spacing.page-y)[
+      #text(font: fonts.mono, size: type-scale.number, fill: fill)[#label]
+    ]
+  } else if progress != none and progress != false {
     place(bottom + right, dx: -spacing.page-x, dy: -spacing.page-y)[
       #text(font: fonts.mono, size: type-scale.number, fill: fill)[#progress]
     ]
   }
 }
 
-#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: ()) = context {
+#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: (), progress: none) = context {
   let t = typeset-theme.get()
   page(fill: t.paper)[
     #place(top + left, dx: 0pt, dy: 0pt)[
@@ -57,6 +71,7 @@
         )
       ]
     }
+    #_footer-progress(progress, t.ink-faint)
   ]
 }
 
@@ -365,7 +380,7 @@
   ]
 }
 
-#let _closing-slide(title: none, subtitle: none, footer: none) = context {
+#let _closing-slide(title: none, subtitle: none, footer: none, progress: none) = context {
   let t = typeset-theme.get()
   page(fill: t.accent)[
     #place(top + left, dx: spacing.page-x, dy: 200pt)[
@@ -382,6 +397,7 @@
         #text(font: fonts.mono, size: type-scale.number, fill: t.on-accent)[#footer]
       ]
     }
+    #_footer-progress(progress, t.on-accent-muted)
   ]
 }
 
