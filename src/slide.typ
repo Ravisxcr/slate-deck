@@ -30,9 +30,93 @@
   }
 }
 
-#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: (), progress: none) = context {
+#let _resolve-slide-theme(t, theme-override) = {
+  if theme-override == auto or theme-override == none {
+    (
+      bg: t.bg,
+      is-dark: t.is-dark,
+      ink: t.ink,
+      ink-muted: t.ink-muted,
+      ink-faint: t.ink-faint,
+      border: t.border,
+      kicker-fill: t.accent-kicker,
+      footer-fill: if t.is-dark { t.on-navy-muted } else { t.ink-faint },
+    )
+  } else if theme-override in ("dark", "navy") {
+    (
+      bg: t.navy,
+      is-dark: true,
+      ink: t.on-navy,
+      ink-muted: t.on-navy-muted,
+      ink-faint: t.on-navy-muted.transparentize(35%),
+      border: oklch(28%, 0.015, oklch(t.accent).components().at(2)),
+      kicker-fill: t.on-navy-accent,
+      footer-fill: t.on-navy-muted,
+    )
+  } else if theme-override in ("charcoal", "black", "neutral-dark", "pure-dark") {
+    (
+      bg: t.charcoal,
+      is-dark: true,
+      ink: oklch(98%, 0.005, 80deg),
+      ink-muted: oklch(70%, 0.01, 80deg),
+      ink-faint: oklch(50%, 0.01, 80deg),
+      border: oklch(28%, 0.005, 80deg),
+      kicker-fill: t.on-navy-accent,
+      footer-fill: oklch(70%, 0.01, 80deg),
+    )
+  } else if theme-override in ("slate", "midnight") {
+    (
+      bg: oklch(18%, 0.02, 240deg),
+      is-dark: true,
+      ink: oklch(98%, 0.01, 240deg),
+      ink-muted: oklch(70%, 0.02, 240deg),
+      ink-faint: oklch(50%, 0.02, 240deg),
+      border: oklch(28%, 0.02, 240deg),
+      kicker-fill: t.on-navy-accent,
+      footer-fill: oklch(70%, 0.02, 240deg),
+    )
+  } else if theme-override in ("accent",) {
+    (
+      bg: t.accent,
+      is-dark: true,
+      ink: t.on-accent,
+      ink-muted: t.on-accent-muted,
+      ink-faint: t.on-accent-muted,
+      border: t.on-accent-muted,
+      kicker-fill: t.on-accent,
+      footer-fill: t.on-accent-muted,
+    )
+  } else if type(theme-override) == color {
+    let comp = oklch(theme-override).components()
+    let is-d = comp.at(0) < 60%
+    (
+      bg: theme-override,
+      is-dark: is-d,
+      ink: if is-d { oklch(98%, 0.01, comp.at(2)) } else { oklch(20%, 0.01, 80deg) },
+      ink-muted: if is-d { oklch(70%, 0.03, comp.at(2)) } else { oklch(45%, 0.02, 80deg) },
+      ink-faint: if is-d { oklch(50%, 0.02, comp.at(2)) } else { oklch(65%, 0.01, 80deg) },
+      border: if is-d { oklch(28%, 0.015, comp.at(2)) } else { oklch(88%, 0.006, 80deg) },
+      kicker-fill: if is-d { t.on-navy-accent } else { t.accent },
+      footer-fill: if is-d { oklch(70%, 0.03, comp.at(2)) } else { oklch(65%, 0.01, 80deg) },
+    )
+  } else {
+    (
+      bg: t.paper,
+      is-dark: false,
+      ink: oklch(20%, 0.01, 80deg),
+      ink-muted: oklch(45%, 0.02, 80deg),
+      ink-faint: oklch(65%, 0.01, 80deg),
+      border: oklch(88%, 0.006, 80deg),
+      kicker-fill: t.accent,
+      footer-fill: oklch(65%, 0.01, 80deg),
+    )
+  }
+}
+
+#let _title-slide(eyebrow: none, eyebrow-icon: none, title: none, subtitle: none, byline: (), progress: none, theme: auto) = context {
   let t = typeset-theme.get()
-  page(fill: t.paper)[
+  let st = _resolve-slide-theme(t, theme)
+  page(fill: st.bg)[
     #place(top + left, dx: 0pt, dy: 0pt)[
       #rect(width: 7pt, height: page-size.height, fill: t.accent)
     ]
@@ -43,21 +127,21 @@
             columns: (auto, auto),
             column-gutter: spacing.sm,
             align: horizon,
-            icon(eyebrow-icon, size: 13pt, color: t.accent),
-            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: t.ink-muted)[#upper(eyebrow)],
+            icon(eyebrow-icon, size: 13pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.ink-muted)[#upper(eyebrow)],
           )
         } else {
-          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: t.ink-muted)[#upper(eyebrow)]
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.ink-muted)[#upper(eyebrow)]
         }
       ]
     }
     #place(top + left, dx: spacing.page-x, dy: 170pt)[
       #box(width: 750pt)[
-        #text(font: fonts.display, weight: 800, size: type-scale.display, fill: t.ink)[#title]
+        #text(font: fonts.display, weight: 800, size: type-scale.display, fill: st.ink)[#title]
         #if subtitle != none {
           v(spacing.lg)
           box(width: 550pt)[
-            #text(font: fonts.body, size: type-scale.body-lg, fill: t.ink-muted)[#subtitle]
+            #text(font: fonts.body, size: type-scale.body-lg, fill: st.ink-muted)[#subtitle]
           ]
         }
       ]
@@ -67,11 +151,11 @@
         #grid(
           columns: byline.len() * (auto,),
           column-gutter: spacing.xxl / 2,
-          ..byline.map(b => text(font: fonts.mono, size: type-scale.number, fill: t.ink-muted)[#b])
+          ..byline.map(b => text(font: fonts.mono, size: type-scale.number, fill: st.ink-muted)[#b])
         )
       ]
     }
-    #_footer-progress(progress, t.ink-faint)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
@@ -99,34 +183,56 @@
   ]
 }
 
-#let _content-slide(kicker: none, title: none, progress: none, body) = context {
+#let _content-slide(kicker: none, kicker-icon: none, title: none, progress: none, theme: auto, body) = context {
   let t = typeset-theme.get()
-  page(fill: t.paper)[
+  let st = _resolve-slide-theme(t, theme)
+  page(fill: st.bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
-        #kicker-label(kicker)
+        #if kicker-icon != none {
+          grid(
+            columns: (auto, auto),
+            column-gutter: spacing.sm,
+            align: horizon,
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
+          )
+        } else {
+          kicker-label(kicker, color: st.kicker-fill)
+        }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: t.ink)[#title]
+        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
         #v(spacing.xl)
       ]
       #body
     ]
-    #_footer-progress(progress, t.ink-faint)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
-#let _compare-slide(kicker: none, title: none, left: none, right: none, progress: none) = context {
+#let _compare-slide(kicker: none, kicker-icon: none, title: none, left: none, right: none, progress: none, theme: auto) = context {
   let t = typeset-theme.get()
-  page(fill: t.paper)[
+  let st = _resolve-slide-theme(t, theme)
+  page(fill: st.bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
-        #kicker-label(kicker)
+        #if kicker-icon != none {
+          grid(
+            columns: (auto, auto),
+            column-gutter: spacing.sm,
+            align: horizon,
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
+          )
+        } else {
+          kicker-label(kicker, color: st.kicker-fill)
+        }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: t.ink)[#title]
+        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
         #v(spacing.xxl - spacing.xs)
       ]
       #grid(
@@ -136,7 +242,7 @@
         compare-card(right.label, right.title, right.items, recommended: right.at("recommended", default: false)),
       )
     ]
-    #_footer-progress(progress, t.ink-faint)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
@@ -152,7 +258,7 @@
   row-gutter: auto,
   column-gutter: auto,
   note: none,
-  theme: "light",
+  theme: auto,
   color: none,
   fill: none,
   bg: none,
@@ -160,40 +266,10 @@
   ..rest,
 ) = context {
   let t = typeset-theme.get()
+  let st = _resolve-slide-theme(t, theme)
   let explicit-fill = if fill != none { fill } else if bg != none { bg } else if color != none { color } else { none }
-  let is-dark = theme in ("dark", "navy")
-  let is-accent = theme in ("accent",)
-  let page-bg = if explicit-fill != none {
-    explicit-fill
-  } else if is-dark {
-    t.navy
-  } else if is-accent {
-    t.accent
-  } else {
-    t.paper
-  }
-  let kicker-fill = if is-dark {
-    t.on-navy-accent
-  } else if is-accent {
-    t.on-accent
-  } else {
-    t.accent
-  }
-  let note-fill = if is-dark {
-    t.on-navy-muted
-  } else if is-accent {
-    t.on-accent-muted
-  } else {
-    t.ink-muted
-  }
-  let footer-fill = if is-dark {
-    t.on-navy-muted
-  } else if is-accent {
-    t.on-accent-muted
-  } else {
-    t.ink-faint
-  }
-  let stat-on = if is-dark { "navy" } else if is-accent { "accent" } else { "paper" }
+  let page-bg = if explicit-fill != none { explicit-fill } else { st.bg }
+  let stat-on = if st.is-dark { "navy" } else { "paper" }
 
   let normalized-stats = if stats.len() > 0 {
     stats
@@ -221,11 +297,11 @@
             columns: (auto, auto),
             column-gutter: spacing.sm,
             align: horizon,
-            icon(kicker-icon, size: 11pt, color: kicker-fill),
-            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)],
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
           )
         } else {
-          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)]
         }
       ]
       #v(top-v-gap)
@@ -254,35 +330,170 @@
     #if note != none {
       place(bottom + left, dx: spacing.page-x, dy: -spacing.xl)[
         #box(width: 500pt)[
-          #text(font: fonts.body, size: type-scale.body, fill: note-fill)[#note]
+          #text(font: fonts.body, size: type-scale.body, fill: st.ink-muted)[#note]
         ]
       ]
     }
-    #_footer-progress(progress, footer-fill)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
-#let _image-slide(image: none, caption-title: none, caption-body: none, progress: none) = context {
+#let _image-slide(
+  image: none,
+  src: none,
+  kicker: none,
+  kicker-icon: none,
+  title: none,
+  caption: none,
+  caption-title: none,
+  caption-body: none,
+  width: auto,
+  height: auto,
+  fit: auto,
+  align: center + horizon,
+  bleed: auto,
+  radius: auto,
+  border: false,
+  progress: none,
+  theme: auto,
+  ..rest,
+) = context {
   let t = typeset-theme.get()
-  page(fill: t.border)[
-    #box(width: 100%, height: 100%, clip: true)[#image]
-    #if caption-title != none {
-      place(bottom + left)[
-        #block(fill: t.navy, inset: (x: spacing.xxl / 2, y: spacing.lg))[
-          #grid(
-            columns: (auto, auto),
-            column-gutter: spacing.md,
-            align: horizon,
-            text(font: fonts.display, weight: 700, size: 16pt, fill: t.on-navy)[#caption-title],
-            if caption-body != none {
-              text(font: fonts.body, size: type-scale.body, fill: t.on-navy-muted)[#caption-body]
-            } else { [] },
-          )
+  let st = _resolve-slide-theme(t, theme)
+  let raw-img = if image != none {
+    image
+  } else if src != none {
+    src
+  } else if rest.pos().len() > 0 {
+    rest.pos().at(0)
+  } else {
+    none
+  }
+
+  let is-bleed = if bleed != auto {
+    bleed
+  } else if kicker != none or title != none {
+    false
+  } else if caption-title != none or caption-body != none {
+    true
+  } else {
+    true
+  }
+
+  let effective-fit = if fit != auto {
+    fit
+  } else if is-bleed {
+    "cover"
+  } else {
+    "contain"
+  }
+
+  let effective-radius = if radius != auto {
+    radius
+  } else if is-bleed {
+    0pt
+  } else {
+    4pt
+  }
+
+  let effective-height = if height in ("fit", "full", "fill") {
+    if is-bleed { 100% } else if title != none { 340pt } else { 420pt }
+  } else if height != auto {
+    height
+  } else if is-bleed {
+    100%
+  } else if title != none {
+    340pt
+  } else {
+    420pt
+  }
+
+  let img-content = if type(raw-img) == str {
+    std.image(
+      _resolve-img-path(raw-img),
+      width: if width != auto { width } else { 100% },
+      height: if height != auto { height } else { 100% },
+      fit: effective-fit,
+    )
+  } else if raw-img != none {
+    raw-img
+  } else {
+    block(
+      width: 100%,
+      height: 100%,
+      fill: if st.is-dark { t.card-bg } else { t.border },
+      std.align(center + horizon)[
+        #text(font: fonts.mono, size: 14pt, fill: st.ink-faint)[asset / image placeholder]
+      ],
+    )
+  }
+
+  if is-bleed {
+    page(fill: st.border)[
+      #box(width: 100%, height: 100%, clip: true)[
+        #std.align(align)[#img-content]
+      ]
+      #if caption-title != none or caption-body != none {
+        place(bottom + left)[
+          #block(fill: if st.is-dark { t.charcoal } else { t.navy }, inset: (x: spacing.xxl / 2, y: spacing.lg))[
+            #grid(
+              columns: (auto, auto),
+              column-gutter: spacing.md,
+              align: std.horizon,
+              if caption-title != none {
+                text(font: fonts.display, weight: 700, size: 16pt, fill: t.on-navy)[#caption-title]
+              },
+              if caption-body != none {
+                text(font: fonts.body, size: type-scale.body, fill: t.on-navy-muted)[#caption-body]
+              },
+            )
+          ]
+        ]
+      }
+      #_footer-progress(progress, st.footer-fill)
+    ]
+  } else {
+    page(fill: st.bg)[
+      #pad(x: spacing.page-x, y: spacing.page-y)[
+        #if kicker != none [
+          #if kicker-icon != none {
+            grid(
+              columns: (auto, auto),
+              column-gutter: spacing.sm,
+              align: horizon,
+              icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+              text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
+            )
+          } else {
+            kicker-label(kicker, color: st.kicker-fill)
+          }
+          #v(spacing.sm)
+        ]
+        #if title != none [
+          #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
+          #v(spacing.lg)
+        ]
+        #std.align(align)[
+          #block(
+            width: if width != auto { width } else { 100% },
+            height: effective-height,
+            radius: effective-radius,
+            stroke: if border { 1pt + st.border } else { none },
+            clip: true,
+          )[
+            #std.align(align)[#img-content]
+          ]
+        ]
+        #if caption != none [
+          #v(spacing.xs)
+          #std.align(align)[
+            #text(font: fonts.mono, size: 9pt, fill: st.ink-muted)[#caption]
+          ]
         ]
       ]
-    }
-    #_footer-progress(progress, t.ink-faint)
-  ]
+      #_footer-progress(progress, st.footer-fill)
+    ]
+  }
 }
 
 #let _code-slide(
@@ -292,7 +503,7 @@
   kicker-icon: none,
   title: none,
   lang: none,
-  theme: "light",
+  theme: auto,
   highlight: (),
   progress: none,
   ..rest,
@@ -307,12 +518,9 @@
     ""
   }
   let t = typeset-theme.get()
-  let is-light = theme == "light"
-  let bg = if is-light { t.paper } else { t.navy }
-  let title-fill = if is-light { t.ink } else { t.on-navy }
-  let kicker-fill = if is-light { t.accent } else { t.on-navy-accent }
-  let footer-fill = if is-light { t.ink-faint } else { t.on-navy-muted }
-  page(fill: bg)[
+  let st = _resolve-slide-theme(t, theme)
+  let code-theme = if st.is-dark { "dark" } else { "light" }
+  page(fill: st.bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
         #if kicker-icon != none {
@@ -320,21 +528,21 @@
             columns: (auto, auto),
             column-gutter: spacing.sm,
             align: horizon,
-            icon(kicker-icon, size: 11pt, color: kicker-fill),
-            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)],
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
           )
         } else {
-          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)]
         }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: 30pt, fill: title-fill)[#title]
+        #text(font: fonts.display, weight: 700, size: 30pt, fill: st.ink)[#title]
         #v(spacing.xxl - spacing.xs)
       ]
-      #code-block(actual-code, lang: lang, theme: theme, highlight: highlight)
+      #code-block(actual-code, lang: lang, theme: code-theme, highlight: highlight)
     ]
-    #_footer-progress(progress, footer-fill)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
@@ -349,16 +557,13 @@
   cell: (width: 150pt, height: 80pt),
   gutter: (x: spacing.xl, y: spacing.lg),
   table-style: (header-height: 22pt, row-height: 18pt),
-  theme: "dark",
+  theme: auto,
   progress: none,
 ) = context {
   let t = typeset-theme.get()
-  let is-light = theme == "light"
-  let bg = if is-light { t.paper } else { t.navy }
-  let title-fill = if is-light { t.ink } else { t.on-navy }
-  let kicker-fill = if is-light { t.accent } else { t.on-navy-accent }
-  let footer-fill = if is-light { t.ink-faint } else { t.on-navy-muted }
-  page(fill: bg)[
+  let st = _resolve-slide-theme(t, theme)
+  let diag-theme = if st.is-dark { "dark" } else { "light" }
+  page(fill: st.bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
         #if kicker-icon != none {
@@ -366,16 +571,16 @@
             columns: (auto, auto),
             column-gutter: spacing.sm,
             align: horizon,
-            icon(kicker-icon, size: 11pt, color: kicker-fill),
-            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)],
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
           )
         } else {
-          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: kicker-fill)[#upper(kicker)]
+          text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)]
         }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: 30pt, fill: title-fill)[#title]
+        #text(font: fonts.display, weight: 700, size: 30pt, fill: st.ink)[#title]
         #v(spacing.xxl - spacing.xs)
       ]
       #align(center)[
@@ -387,41 +592,91 @@
           cell: cell,
           gutter: gutter,
           table-style: table-style,
-          theme: theme,
+          theme: diag-theme,
         )
       ]
     ]
-    #_footer-progress(progress, footer-fill)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
-#let _quote-slide(quote: none, name: none, role: none, progress: none) = context {
+#let _quote-slide(
+  quote: none,
+  name: none,
+  role: none,
+  photo: none,
+  image: none,
+  avatar: none,
+  radius: 50%,
+  photo-size: 32pt,
+  progress: none,
+  theme: auto,
+) = context {
   let t = typeset-theme.get()
-  page(fill: t.paper)[
+  let st = _resolve-slide-theme(t, theme)
+  page(fill: st.bg)[
     #place(horizon + left, dx: 80pt)[
       #box(width: page-size.width - 160pt)[
-        #pull-quote(quote, name, role)
+        #pull-quote(
+          quote,
+          name,
+          role,
+          photo: photo,
+          image: image,
+          avatar: avatar,
+          radius: radius,
+          size: photo-size,
+        )
       ]
     ]
-    #_footer-progress(progress, t.ink-faint)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 
-#let _team-slide(kicker: none, title: none, members: (), columns: 4, progress: none) = context {
+#let _team-slide(
+  kicker: none,
+  kicker-icon: none,
+  title: none,
+  members: (),
+  columns: 4,
+  radius: 3pt,
+  photo-height: 90pt,
+  progress: none,
+  theme: auto,
+) = context {
   let t = typeset-theme.get()
-  page(fill: t.paper)[
+  let st = _resolve-slide-theme(t, theme)
+  page(fill: st.bg)[
     #pad(x: spacing.page-x, y: spacing.page-y)[
       #if kicker != none [
-        #kicker-label(kicker)
+        #if kicker-icon != none {
+          grid(
+            columns: (auto, auto),
+            column-gutter: spacing.sm,
+            align: horizon,
+            icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+            text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
+          )
+        } else {
+          kicker-label(kicker, color: st.kicker-fill)
+        }
         #v(spacing.sm)
       ]
       #if title != none [
-        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: t.ink)[#title]
+        #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
         #v(spacing.xxl)
       ]
-      #cols(members.map(m => team-card(m.name, m.role)), columns: columns)
+      #cols(
+        members.map(m => {
+          let card-photo = m.at("photo", default: m.at("image", default: m.at("avatar", default: none)))
+          let card-radius = m.at("radius", default: radius)
+          let card-height = m.at("height", default: photo-height)
+          team-card(m.name, m.role, photo: card-photo, radius: card-radius, height: card-height)
+        }),
+        columns: columns,
+      )
     ]
-    #_footer-progress(progress, t.ink-faint)
+    #_footer-progress(progress, st.footer-fill)
   ]
 }
 

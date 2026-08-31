@@ -8,14 +8,14 @@ Every color, font weight, type size, and vertical margin is declared as a reusab
 
 ## 1. The One-Line Rebrand System
 
-Instead of editing dozens of hex colors across individual slides, SlateDeck generates its entire palette dynamically from your chosen **accent color** (in standard RGB/Hex notation or hue angle) using the native OKLCH perceptual color space:
+Instead of editing dozens of hex colors across individual slides, SlateDeck generates its entire palette dynamically from your chosen **accent color** (as a `color` or hex string):
 
 ```typst
 #show: deck.with(
   title: "MongoDB Architecture",
   author: "Ravi",
-  accent: rgb("#00ED64"), // Hex/RGB notation or hex string "#00ED64"
-  // accent-hue: 140deg,  // Hue angle notation is also fully supported
+  accent: rgb("#00ED64"), // Color or hex string "#00ED64"
+  theme: "dark",          // "light", "dark" (navy), "charcoal" (black), "slate", or custom color
 )
 ```
 
@@ -25,20 +25,30 @@ Instead of editing dozens of hex colors across individual slides, SlateDeck gene
 |---|---|---|---|
 | `title` | `string` | `none` | Document title for PDF export metadata (`document.title`). |
 | `author` | `string` | `none` | Author / organization for PDF metadata (`document.author`). |
-| `accent` | `color` / `str` / `angle` | `auto` | Primary deck accent. Accepts `rgb("#6f789a")`, hex string `"#6f789a"`, or angle `140deg`. |
-| `accent-hue` | `angle` / `color` / `str` | `250deg` | Base hue angle or color generating all accent and tinted color tokens. |
-| `accent-chroma` | `float` | `auto` (0.16) | Perceptual chroma / saturation intensity of the accent color (auto-derived when using RGB colors). |
+| `accent` | `color` / `str` | `rgb("#4e61d8")` | Primary deck accent color. Accepts `rgb("#00ED64")` or hex string `"#00ED64"`. |
+| `theme` | `string` / `color` | `"light"` | Global theme canvas: `"light"`, `"dark"` / `"navy"`, `"charcoal"` / `"black"`, `"slate"`, or custom `color`. |
+| `progress` | `bool` | `false` | When `true`, enables slide progress numbers across all slides. |
 
-### Popular Brand Hue Presets
+### Global Themes & Dark Shades
 
-| Accent Hue | Visual Style | Example Tone |
+| Theme Preset | Background | Tone / Style |
 |---|---|---|
-| `250deg` | **Royal Indigo / Violet** *(Default)* | Enterprise tech, developer tools |
-| `215deg` | **Deep Electric Blue** | Cloud infrastructure, security |
-| `165deg` | **Emerald Teal** | Data science, analytics, sustainability |
-| `145deg` | **Forest Green** | Financial tech, growth updates |
-| `30deg`  | **Warm Coral / Amber** | Consumer products, creative pitches |
-| `345deg` | **Crimson Rose** | Executive summaries, marketing |
+| `"light"` *(Default)* | `oklch(98.5%, 0.004, 80deg)` | Ultra-light warm canvas with dark ink typography. |
+| `"dark"` / `"navy"` | `oklch(16%, 0.015, hue)` | Accent-tinted deep navy canvas for developer talks & system briefs. |
+| `"charcoal"` / `"black"` | `oklch(13%, 0.004, 80deg)` | Deep neutral pitch-dark canvas (`#111318`) with high contrast. |
+| `"slate"` / `"midnight"` | `oklch(18%, 0.02, 240deg)` | Modern slate dark-blue canvas (`#0f172a`). |
+| Custom `color` | e.g. `rgb("#0f172a")` | Any custom background color; text contrast is auto-computed. |
+
+### Popular Brand Color Presets
+
+| Brand Color | Hex / RGB | Tone / Identity |
+|---|---|---|
+| **Indigo / Violet** *(Default)* | `rgb("#4e61d8")` | Enterprise tech, developer tools |
+| **Electric Blue** | `rgb("#2563eb")` | Cloud infrastructure, security |
+| **Emerald Green** | `rgb("#00ED64")` | MongoDB, data platforms, growth |
+| **Teal / Cyan** | `rgb("#06b6d4")` | Analytics, developer platforms |
+| **Amber / Coral** | `rgb("#f59e0b")` | Product launches, creative pitches |
+| **Crimson Rose** | `rgb("#e11d48")` | Executive summaries, incident reports |
 
 ---
 
@@ -46,21 +56,21 @@ Instead of editing dozens of hex colors across individual slides, SlateDeck gene
 
 Every color in SlateDeck is calculated with guaranteed perceptual contrast ratios.
 
-| Token | OKLCH Definition | Description & Role |
+| Token | Type | Description & Role |
 |---|---|---|
-| `paper` | `oklch(98.5%, 0.004, 80deg)` | Ultra-light warm canvas background for default slides. |
-| `ink` | `oklch(20%, 0.01, 80deg)` | High-contrast primary dark text on light backgrounds. |
-| `ink-muted` | `oklch(45%, 0.02, 80deg)` | Secondary text, bullet body copy, and subtitles. |
-| `ink-faint` | `oklch(65%, 0.01, 80deg)` | Tertiary text, footnote labels, and subtle borders. |
-| `border` | `oklch(88%, 0.006, 80deg)` | Card borders and divider lines on light slides. |
-| `accent` | `oklch(55%, chroma, hue)` | The signature accent color — kickers, links, focus borders. |
-| `accent-soft` | `oklch(55%, chroma, hue, 5%)` | 5% opacity accent fill for recommended cards and pills. |
-| `on-accent` | `oklch(98%, 0.01, hue)` | High-contrast primary light text on accent backgrounds. |
-| `on-accent-muted` | `oklch(92%, 0.03, hue)` | Secondary text on accent backgrounds (section slides). |
-| `navy` | `oklch(16%, 0.01, hue)` | Rich dark backdrop for `stat`, `code`, and dark diagrams. |
-| `on-navy` | `oklch(98%, 0.01, hue)` | Primary light text on dark navy backgrounds. |
-| `on-navy-muted` | `oklch(70%, 0.03, hue)` | Secondary muted text on dark navy backgrounds. |
-| `on-navy-accent` | `oklch(65%, chroma - 0.02, hue)` | Readable accent-tinted kicker text on navy backdrops. |
+| `paper` | `color` | Ultra-light warm canvas background for default slides. |
+| `ink` | `color` | High-contrast primary dark text on light backgrounds. |
+| `ink-muted` | `color` | Secondary text, bullet body copy, and subtitles. |
+| `ink-faint` | `color` | Tertiary text, footnote labels, and subtle borders. |
+| `border` | `color` | Card borders and divider lines on light slides. |
+| `accent` | `color` | The signature accent color — kickers, links, focus borders. |
+| `accent-soft` | `color` | 5% opacity accent fill for recommended cards and pills. |
+| `on-accent` | `color` | High-contrast primary light/dark text on accent backgrounds. |
+| `on-accent-muted` | `color` | Secondary text on accent backgrounds (section slides). |
+| `navy` | `color` | Rich dark backdrop for `stat`, `code`, and dark diagrams. |
+| `on-navy` | `color` | Primary light text on dark navy backgrounds. |
+| `on-navy-muted` | `color` | Secondary muted text on dark navy backgrounds. |
+| `on-navy-accent` | `color` | Readable accent-tinted kicker text on navy backdrops. |
 
 ### Accessing Color Tokens in Custom Markup
 

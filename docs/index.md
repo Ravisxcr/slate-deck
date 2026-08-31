@@ -11,7 +11,7 @@ With SlateDeck, you declare slides with clean, structured parameters instead of 
 - **Structured Slide Types**: 11 purpose-built slide kinds (`title`, `section`, `content`, `compare`, `stat`, `code`, `diagram`, `quote`, `team`, `image`, `closing`) designed for rapid authoring.
 - **Standalone Component Library**: Modular UI primitives including cards, multi-column grids, pull quotes, database ER tables, and stat counters.
 - **Built-in Architecture Diagramming**: Manual-placement node-and-edge diagram canvas with automatic elbow routing, row-level schema anchors, and zero external dependencies.
-- **Instant One-Line Theming**: Full-spectrum OKLCH color generation derived dynamically from a single RGB/Hex color (`accent: rgb("#6f789a")` / `accent: "#6f789a"`) or hue angle (`accent-hue: 250deg`).
+- **Instant One-Line Theming**: Full-spectrum color generation derived dynamically from a single RGB/Hex color (`accent: rgb("#2563eb")` / `accent: "#2563eb"`).
 - **1,750+ Bundled Icons**: Full [Lucide](https://lucide.dev) line icon set plus popular developer brand marks from [Simple Icons](https://simpleicons.org), with automatic sizing and baseline alignment.
 - **Precision Typography**: Bundled static weights of Archivo (Display), IBM Plex Sans (Body), and IBM Plex Mono (Code & Kickers) for reproducible offline rendering.
 
@@ -45,7 +45,7 @@ Every slide below is rendered natively by Typst using the SlateDeck public API:
 | ![Brand Marks](assets/gallery/showcase-brand-icons.png) | ![Card Reuse](assets/gallery/showcase-compare-reuse.png) |
 | **`icon(brand: true)`** — Full-color developer and cloud logos | **Component Reuse** — Modular cards composed into custom 3-column grids |
 | ![Live Rebrand](assets/gallery/showcase-rebrand-stat.png) | ![Closing Slide](assets/gallery/mongodb-closing.png) |
-| **One-Line Rebrand** — Instant palette shift via `accent-hue` | **`closing`** — Matching accent-colored outro and contact slide |
+| **One-Line Rebrand** — Instant palette shift via `accent` | **`closing`** — Matching accent-colored outro and contact slide |
 
 ---
 
@@ -58,7 +58,7 @@ Every slide below is rendered natively by Typst using the SlateDeck public API:
 #show: deck.with(
   title: "Cloud Migration Strategy",
   author: "Infrastructure Team",
-  accent-hue: 215deg, // Royal Blue
+  accent: rgb("#2563eb"), // Royal Blue
 )
 
 // 2. Cover Slide

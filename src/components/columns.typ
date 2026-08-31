@@ -59,7 +59,7 @@
     cells.push(grid(
       columns: (auto, 1fr),
       column-gutter: spacing.md,
-      text(font: fonts.display, weight: 800, size: 20pt, fill: t.accent)[#num],
+      text(font: fonts.display, weight: 800, size: 20pt, fill: t.accent-kicker)[#num],
       stack(
         spacing: 5pt,
         text(font: fonts.body, size: 15pt, weight: 600, fill: t.ink)[#title],

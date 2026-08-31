@@ -3,7 +3,7 @@
 #import "../src/lib.typ": *
 #import "../src/theme.typ": typeset-theme
 
-#show: deck.with(title: "MongoDB", author: "Ravi", accent: rgb("#1d178b"), progress: true)
+#show: deck.with(title: "MongoDB", author: "Ravi", accent: rgb("#00ED64"), progress: true,)
 
 #slide(
   kind: "title",

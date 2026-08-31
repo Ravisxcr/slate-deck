@@ -55,7 +55,7 @@ Once installed, create your presentation file `my-deck.typ`:
 #show: deck.with(
   title: "Modernizing Core Infrastructure",
   author: "Platform Engineering",
-  accent: rgb("#6f789a"), // Or hex string "#6f789a", or accent-hue: 250deg
+  accent: rgb("#4e61d8"), // Or hex string "#4e61d8"
 )
 
 // 2. Cover Slide

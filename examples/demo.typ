@@ -1,6 +1,6 @@
 #import "../src/lib.typ": *
 
-#show: deck.with(title: "SlateDeck Demo", author: "Ravi", accent-hue: 250deg)
+#show: deck.with(title: "SlateDeck Demo", author: "Ravi", accent: rgb("#ae0505"))
 
 #slide(
   kind: "title",
@@ -57,15 +57,55 @@
 
 #slide(
   kind: "image",
-  image: rect(width: 100%, height: 100%, fill: luma(230))[
-    #align(center + horizon)[
-      #text(font: "IBM Plex Mono", size: 13pt, fill: luma(100))[\[ product screenshot — drop full-bleed image here \]]
-    ]
-  ],
-  caption-title: [Dashboard v2],
-  caption-body: [Redesigned monitoring view, shipping with this release],
-  progress: [06 / 10],
+  image: "docs/assets/gallery/diagram-cloud.png",
+  caption-title: [Distributed Service Architecture],
+  caption-body: [Real-time cloud request routing topology across availability zones],
+  progress: [06 / 12],
 )
+
+#slide(kicker: [Component: image-card()], title: [Framed images with captions for spec documents])[
+  #grid(
+    columns: (1fr, 1.2fr),
+    column-gutter: 24pt,
+    [
+      #text(weight: 600, size: 14pt)[Cluster Monitoring Architecture]
+      #v(8pt)
+      - End-to-end latency profiling with Prometheus & Grafana
+      - Real-time node health heartbeat checks every 500ms
+      - Automated replication failover trigger
+      #v(14pt)
+      #text(font: fonts.mono, size: 9.5pt, fill: rgb("#7a7568"))[Supports PNG, JPG, and vector SVG assets.]
+    ],
+    image-card(
+      "docs/assets/gallery/diagram-er.png",
+      title: [Schema Entity Relationship Model],
+      caption: [Figure 2.4 — Relational schema mapping],
+      height: 280pt,
+      fit: "contain",
+    ),
+  )
+]
+
+#slide(kicker: [Multi-image layout], title: [Collage and multi-asset gallery grids])[
+  #image-grid((
+    (src: "docs/assets/gallery/title.png", title: [Title Slide], caption: [Spec-first display]),
+    (src: "docs/assets/gallery/code.png", title: [Code Block], caption: [Syntax highlighting]),
+    (src: "docs/assets/gallery/stat.png", title: [Hero Metric], caption: [170pt display numbers]),
+    (src: "docs/assets/gallery/compare.png", title: [Compare Cards], caption: [Build vs. buy]),
+    (src: "docs/assets/gallery/team.png", title: [Team Roster], caption: [Avatar picture cards]),
+    (src: "docs/assets/gallery/diagram.png", title: [Architecture Canvas], caption: [Connected nodes]),
+  ), columns: 3, height: 130pt)
+]
+
+#slide(kicker: [Single image layout], title: [High-resolution topology fitted to slide bounds])[
+  #image-card(
+    "docs/assets/gallery/diagram-cloud.png",
+    title: [End-to-End Cloud Routing Map],
+    caption: [Figure 3.1 — Full viewport fit maintaining standard margin],
+    height: "fit",
+    fit: "contain",
+  )
+]
 
 #slide(
   kind: "code",
@@ -171,21 +211,24 @@
   quote: [Switching to the shared template meant every team's deck finally looked like it came from the same company.],
   name: [Priya Nathan],
   role: [VP, Developer Platform],
-  progress: [09 / 10],
+  photo: "assets/icons/brand/kubernetes.svg",
+  radius: 50%,
+  progress: [09 / 12],
 )
 
 #slide(
   kind: "team",
   kicker: [Who's building it],
   title: [The core package team],
+  radius: 50%,
   members: (
-    (name: [Jordan Reyes], role: [Platform Eng]),
-    (name: [Priya Nathan], role: [Dev Platform VP]),
-    (name: [Marcus Ito], role: [Typography]),
-    (name: [Ana Cole], role: [Design Systems]),
+    (name: [Jordan Reyes], role: [Platform Eng], photo: "assets/icons/brand/rust.svg"),
+    (name: [Priya Nathan], role: [Dev Platform VP], photo: "assets/icons/brand/kubernetes.svg"),
+    (name: [Marcus Ito], role: [Typography], photo: "assets/icons/brand/python.svg"),
+    (name: [Ana Cole], role: [Design Systems], photo: "assets/icons/brand/react.svg"),
   ),
   columns: 4,
-  progress: [10 / 10],
+  progress: [10 / 12],
 )
 
 #slide(kicker: [Component: icon()], title: [One icon call, two icon families])[

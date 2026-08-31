@@ -75,7 +75,7 @@ Create a new file called `my-deck.typ` and paste the following boilerplate:
 #show: deck.with(
   title: "Engineering Architecture 2026",
   author: "Platform Engineering Team",
-  accent-hue: 250deg, // Violet-blue accent
+  accent: rgb("#4e61d8"), // Indigo/violet accent
 )
 
 // Slide 1: Cover Title Slide
@@ -130,7 +130,7 @@ typst watch my-deck.typ my-deck.pdf
 
 ### 1. Global Deck Configuration (`#show: deck.with(...)`)
 
-Always place the `#show: deck.with(...)` rule at the very top of your document. It initializes the presentation engine, sets up 16:9 widescreen dimensions (960pt × 540pt), embeds PDF metadata, zeroes unsafe default margins, and derives the complete OKLCH theme palette from your chosen accent hue.
+Always place the `#show: deck.with(...)` rule at the very top of your document. It initializes the presentation engine, sets up 16:9 widescreen dimensions (960pt × 540pt), embeds PDF metadata, zeroes unsafe default margins, and derives the complete theme palette from your chosen accent color.
 
 ```typst
 #import "@local/slatedeck:0.1.0": *
@@ -138,8 +138,7 @@ Always place the `#show: deck.with(...)` rule at the very top of your document. 
 #show: deck.with(
   title: "MongoDB Deep Dive",
   author: "Ravi",
-  accent: rgb("#00ED64"), // Familiar RGB or Hex notation (e.g. "#00ED64", rgb("#6f789a"))
-  // accent-hue: 140deg,  // Hue angle notation is also fully supported
+  accent: rgb("#00ED64"), // Color or hex string "#00ED64"
 )
 ```
 
@@ -149,20 +148,19 @@ Always place the `#show: deck.with(...)` rule at the very top of your document. 
 |---|---|---|---|
 | `title` | `string` | `none` | Presentation title embedded into PDF metadata (`document.title`). |
 | `author` | `string` | `none` | Author / team name embedded into PDF metadata (`document.author`). |
-| `accent` | `color` / `str` / `angle` | `auto` | Primary deck accent. Accepts `rgb("#6f789a")`, hex string `"#6f789a"`, or angle `140deg`. |
-| `accent-hue` | `angle` / `color` / `str` | `250deg` | Base hue angle or color generating all accent and tinted color tokens. |
-| `accent-chroma` | `float` | `auto` (0.16) | Perceptual chroma / saturation intensity of the accent color in OKLCH space. |
+| `accent` | `color` / `str` | `rgb("#4e61d8")` | Primary deck accent color. Accepts `rgb("#00ED64")` or hex string `"#00ED64"`. |
+| `theme` | `string` / `color` | `"light"` | Global theme canvas: `"light"`, `"dark"` / `"navy"`, `"charcoal"` / `"black"`, `"slate"`, or custom `color`. |
 | `progress` | `bool` | `false` | When `true`, automatically renders slide progress (e.g. `01 / 10`) on all slides across the deck. |
 
-#### Popular Brand Hue Presets
+#### Popular Brand Color Presets
 
-| Accent Hue | Tone / Identity | Recommended For |
+| Brand Color | Hex / RGB | Recommended For |
 |---|---|---|
-| `140deg` – `145deg` | **Forest / Emerald Green** | MongoDB, Node.js, Spring, FinTech & Growth talks |
-| `215deg` | **Cloud Electric Blue** | Cloud architecture, Kubernetes, AWS/GCP/Azure |
-| `250deg` | **Royal Indigo / Violet** *(Default)* | Developer platforms, systems engineering |
-| `30deg` | **Warm Amber / Coral** | Product demos, design systems, consumer pitches |
-| `345deg` | **Crimson Rose** | Executive updates, security incident response |
+| **Emerald Green** | `rgb("#00ED64")` | MongoDB, Node.js, Spring, FinTech & Growth talks |
+| **Cloud Electric Blue** | `rgb("#2563eb")` | Cloud architecture, Kubernetes, AWS/GCP/Azure |
+| **Indigo / Violet** *(Default)* | `rgb("#4e61d8")` | Developer platforms, systems engineering |
+| **Warm Amber / Coral** | `rgb("#f59e0b")` | Product demos, design systems, consumer pitches |
+| **Crimson Rose** | `rgb("#e11d48")` | Executive updates, security incident response |
 
 ### 2. The `#slide(...)` Function
 Every slide in your presentation is created with a single call to `#slide(...)`. 
@@ -173,7 +171,7 @@ Every slide in your presentation is created with a single call to `#slide(...)`.
 In addition to the global `#show: deck.with(...)` rule, you can dynamically update the theme state at any point in your deck using `#typeset-theme.update(...)`:
 
 ```typst
-#typeset-theme.update(make-theme(accent-hue: 15deg))
+#typeset-theme.update(make-theme(accent: rgb("#e11d48")))
 ```
 
 ---

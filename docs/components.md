@@ -14,11 +14,12 @@ In addition to full-slide layouts, SlateDeck provides a library of **modular UI 
 | [`cols()`](#4-cols) | Generic N-column grid helper for multi-item layouts. |
 | [`compare-card()`](#5-compare-card) | Structured feature/option card with optional accent recommendation highlight. |
 | [`team-card()`](#6-team-card) | Team member card with avatar placeholder, name, and role. |
-| [`stat-hero()`](#7-stat-hero) | Oversized hero number paired with adjacent bold caption. |
-| [`stat-grid()`](#8-stat-grid) | Multi-stat metric grid with configurable columns and flow direction. |
-| [`pull-quote()`](#9-pull-quote) | Formatted testimonial with accent rule and author attribution. |
-| [`code-block()`](#10-code-block) | Syntax-highlighted code block with line numbering and row highlights. |
-| [`er-table()`](#11-er-table) | Database / ER schema table with column types and primary/foreign key badges. |
+| [`image-card()`](#7-image-card) | Framed container for PNG, JPG, and SVG assets with optional title & caption. |
+| [`stat-hero()`](#8-stat-hero) | Oversized hero number paired with adjacent bold caption. |
+| [`stat-grid()`](#9-stat-grid) | Multi-stat metric grid with configurable columns and flow direction. |
+| [`pull-quote()`](#10-pull-quote) | Formatted testimonial with accent rule and author attribution. |
+| [`code-block()`](#11-code-block) | Syntax-highlighted code block with line numbering and row highlights. |
+| [`er-table()`](#12-er-table) | Database / ER schema table with column types and primary/foreign key badges. |
 
 ---
 
@@ -188,11 +189,11 @@ A standalone comparison card with an upper label, title, divider line, and list 
 
 ## 6. `team-card()`
 
-Renders a structured team card with a dashed photo placeholder block, prominent name, and role description.
+Renders a structured team card with an avatar/photo block (or dashed placeholder), prominent name, and role description.
 
 ### Signature
 ```typst
-#team-card(name, role)
+#team-card(name, role, photo: none, radius: 3pt, height: 90pt)
 ```
 
 ### Parameters
@@ -201,16 +202,72 @@ Renders a structured team card with a dashed photo placeholder block, prominent 
 |---|---|---|---|
 | `name` | `content` | *Positional* | Person's name (13pt semibold). |
 | `role` | `content` | *Positional* | Person's title, team, or role description. |
+| `photo` / `avatar` / `image` | `content` / `string` | `none` | Custom photo image path (e.g. `"assets/jordan.jpg"`) or `image(...)` content. |
+| `radius` | `length` / `ratio` | `3pt` | Corner radius for the avatar box (use `50%` for circular avatars). |
+| `height` | `length` | `90pt` | Height of the photo/avatar container block. |
 
 ### Example
 
 ```typst
+// Default placeholder:
 #team-card([Marcus Vance], [Principal Infrastructure Architect])
+
+// Circular avatar with custom photo:
+#team-card(
+  [Priya Nathan],
+  [VP Platform Engineering],
+  photo: "assets/priya.jpg",
+  radius: 50%,
+)
 ```
 
 ---
 
-## 7. `stat-hero()`
+---
+
+## 7. `image-card()`
+
+A styled framed container for PNG, JPG, and SVG assets with support for corner radius, optional border, title, and descriptive caption.
+
+### Signature
+```typst
+#image-card(image, caption: none, title: none, fit: "contain", radius: 4pt, width: 100%, height: auto)
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `image` | `content` / `string` | *Positional* | Asset file path string (e.g. `"assets/diagram.png"`, `"assets/logo.svg"`) or `image(...)` content. |
+| `title` | `content` | `none` | Bold title above the image. |
+| `caption` | `content` | `none` | Monospace caption label below the image. |
+| `fit` | `string` | `"contain"` | Scaling mode: `"contain"`, `"cover"`, or `"stretch"`. |
+| `radius` | `length` | `4pt` | Corner radius for the frame. |
+| `stroke` | `stroke` / `bool` / `auto` | `auto` | Border stroke (default `1pt + border`). |
+| `fill` | `color` / `auto` | `auto` | Container background fill. |
+| `width` | `length` / `ratio` | `100%` | Card width. |
+| `height` | `length` / `auto` | `auto` | Card height. |
+
+### Example
+
+```typst
+#slide(kicker: [Architecture], title: [Cluster Topology])[
+  #grid(
+    columns: (1fr, 1fr),
+    column-gutter: 24pt,
+    [
+      #text(weight: 600)[Primary & Secondary Topology]
+      - Automatic failover in under 2 seconds
+      - Raft-based consensus protocol
+    ],
+    image-card("assets/topology.svg", title: [Replica Set Architecture], caption: [Figure 1.1]),
+  )
+]
+```
+
+---
+
+## 8. `stat-hero()`
 
 Displays a metric value (170pt hero display font or custom size) paired with an adjacent bold caption.
 
@@ -238,7 +295,7 @@ Displays a metric value (170pt hero display font or custom size) paired with an 
 
 ---
 
-## 8. `stat-grid()`
+## 9. `stat-grid()`
 
 Renders a grid of multiple metrics arranged across columns with customizable flow direction.
 
@@ -272,13 +329,13 @@ Renders a grid of multiple metrics arranged across columns with customizable flo
 
 ---
 
-## 9. `pull-quote()`
+## 10. `pull-quote()`
 
-A testimonial pull-quote with a prominent accent rule, large quote typography (32pt), and an author badge with name and role.
+A testimonial pull-quote with a prominent accent rule, large quote typography (32pt), and an author avatar badge with name and role.
 
 ### Signature
 ```typst
-#pull-quote(body, name, role)
+#pull-quote(body, name, role, photo: none, radius: 50%, size: 32pt)
 ```
 
 ### Parameters
@@ -288,6 +345,9 @@ A testimonial pull-quote with a prominent accent rule, large quote typography (3
 | `body` | `content` | *Positional* | Main quote text. |
 | `name` | `content` | *Positional* | Attribution name. |
 | `role` | `content` | *Positional* | Role or company title. |
+| `photo` / `avatar` / `image` | `content` / `string` | `none` | Custom photo image path (e.g. `"assets/david.jpg"`) or `image(...)` content. |
+| `radius` | `length` / `ratio` | `50%` | Avatar corner radius (default `50%` for circle). |
+| `size` | `length` | `32pt` | Diameter / size of the avatar badge. |
 
 ### Example
 
@@ -296,12 +356,14 @@ A testimonial pull-quote with a prominent accent rule, large quote typography (3
   [Adopting standard schema tables in our architectural reviews reduced API integration errors by 60%.],
   [David Chen],
   [Head of Developer Experience],
+  photo: "assets/david.jpg",
+  radius: 50%,
 )
 ```
 
 ---
 
-## 10. `code-block()`
+## 11. `code-block()`
 
 A line-numbered, syntax-highlighted code container with row highlighting and theme toggling.
 
@@ -340,7 +402,7 @@ A line-numbered, syntax-highlighted code container with row highlighting and the
 
 ---
 
-## 11. `er-table()`
+## 12. `er-table()`
 
 A standalone database / ER schema table displaying a stylized table header, column names, data types, and primary/foreign key badges.
 

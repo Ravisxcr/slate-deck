@@ -6,7 +6,7 @@
 #import "../src/lib.typ": *
 #import "../src/theme.typ": make-theme, typeset-theme
 
-#show: deck.with(title: "typeset showcase", author: "Ravi", accent-hue: 165deg)
+#show: deck.with(title: "typeset showcase", author: "Ravi", accent: rgb("#0ea5e9"))
 
 #slide(
   kind: "title",
@@ -160,17 +160,17 @@
   kind: "section",
   label: [Live rebrand],
   title: [Everything past this slide is one config line away],
-  blurb: [No component below has changed — only `accent-hue` did.],
+  blurb: [No component below has changed — only `accent` did.],
   progress: [09 / 12],
 )
 
 // The "one-line rebrand" pitch, demonstrated rather than described: updating the theme state
 // mid-document retroactively recolors every component from here on, with zero component edits.
-#typeset-theme.update(make-theme(accent-hue: 15deg))
+#typeset-theme.update(make-theme(accent: rgb("#e11d48")))
 
-#slide(kicker: [Same components, new hue], title: [accent-hue: 15deg — nothing else touched])[
+#slide(kicker: [Same components, new accent], title: [accent: `#e11d48` — nothing else touched])[
   #numbered-grid((
-    ([Still the same numbered-grid], [Every token — accent, accent-soft, on-navy-accent — derives from one hue.]),
+    ([Still the same numbered-grid], [Every token — accent, accent-soft, on-navy-accent — derives from the accent color.]),
     ([Still the same icon() calls], [#icon("check-circle-2", size: 14pt) recolors automatically, no per-call override.]),
   ))
 ]
@@ -180,7 +180,7 @@
   kicker: [Rebrand, continued],
   value: [1],
   caption: [line of config to change every accent token in the deck],
-  note: [Compare against the "Deck production time" stat slide in demo.typ — same component, different hue, zero edits.],
+  note: [Compare against the "Deck production time" stat slide in demo.typ — same component, different accent, zero edits.],
 )
 
 #slide(
