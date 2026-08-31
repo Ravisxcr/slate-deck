@@ -466,20 +466,50 @@
   ]
 }
 
-#let _quote-slide(quote: none, name: none, role: none, progress: none, theme: auto) = context {
+#let _quote-slide(
+  quote: none,
+  name: none,
+  role: none,
+  photo: none,
+  image: none,
+  avatar: none,
+  radius: 50%,
+  photo-size: 32pt,
+  progress: none,
+  theme: auto,
+) = context {
   let t = typeset-theme.get()
   let st = _resolve-slide-theme(t, theme)
   page(fill: st.bg)[
     #place(horizon + left, dx: 80pt)[
       #box(width: page-size.width - 160pt)[
-        #pull-quote(quote, name, role)
+        #pull-quote(
+          quote,
+          name,
+          role,
+          photo: photo,
+          image: image,
+          avatar: avatar,
+          radius: radius,
+          size: photo-size,
+        )
       ]
     ]
     #_footer-progress(progress, st.footer-fill)
   ]
 }
 
-#let _team-slide(kicker: none, kicker-icon: none, title: none, members: (), columns: 4, progress: none, theme: auto) = context {
+#let _team-slide(
+  kicker: none,
+  kicker-icon: none,
+  title: none,
+  members: (),
+  columns: 4,
+  radius: 3pt,
+  photo-height: 90pt,
+  progress: none,
+  theme: auto,
+) = context {
   let t = typeset-theme.get()
   let st = _resolve-slide-theme(t, theme)
   page(fill: st.bg)[
@@ -502,7 +532,15 @@
         #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
         #v(spacing.xxl)
       ]
-      #cols(members.map(m => team-card(m.name, m.role)), columns: columns)
+      #cols(
+        members.map(m => {
+          let card-photo = m.at("photo", default: m.at("image", default: m.at("avatar", default: none)))
+          let card-radius = m.at("radius", default: radius)
+          let card-height = m.at("height", default: photo-height)
+          team-card(m.name, m.role, photo: card-photo, radius: card-radius, height: card-height)
+        }),
+        columns: columns,
+      )
     ]
     #_footer-progress(progress, st.footer-fill)
   ]

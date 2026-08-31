@@ -355,6 +355,9 @@ A centered pull-quote layout featuring an accent bar, large display quote text (
 | `quote` | `content` | `none` | **Yes** | Main quote text block. |
 | `name` | `content` | `none` | **Yes** | Attribution name. |
 | `role` | `content` | `none` | Optional | Attribution title, company, or team role. |
+| `photo` / `avatar` / `image` | `content` / `string` | `none` | Optional | Custom photo image path (e.g. `"assets/priya.jpg"`) or `image(...)` content. |
+| `radius` | `length` / `ratio` | `50%` | Optional | Avatar corner radius (use `50%` for circular badge). |
+| `photo-size` | `length` | `32pt` | Optional | Size / diameter of the avatar badge. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
 ### Exact Code for Above Slide
@@ -365,6 +368,8 @@ A centered pull-quote layout featuring an accent bar, large display quote text (
   quote: [Switching to the shared template meant every team's deck finally looked like it came from the same company.],
   name: [Priya Nathan],
   role: [VP, Developer Platform],
+  photo: "assets/priya.jpg",
+  radius: 50%,
   progress: [09 / 10],
 )
 ```
@@ -381,10 +386,12 @@ An N-column grid of team member cards, each featuring a photo placeholder block,
 
 | Parameter | Type | Default | Required? | Description |
 |---|---|---|---|---|
-| `members` | `array` | `()` | **Yes** | Array of member dictionaries: `((name: [...], role: [...]), ...)`. |
+| `members` | `array` | `()` | **Yes** | Array of member dictionaries: `((name: [...], role: [...], photo: "...", radius: 50%), ...)`. |
 | `kicker` | `content` | `none` | Optional | Top mono kicker label. |
 | `title` | `content` | `none` | Optional | Slide headline. |
 | `columns` | `int` | `4` | Optional | Number of horizontal team card columns (default `4`). |
+| `radius` | `length` / `ratio` | `3pt` | Optional | Default corner radius for all team cards on the slide (use `50%` for circular avatars). |
+| `photo-height` | `length` | `90pt` | Optional | Height of the avatar block for cards on the slide. |
 | `progress` | `content` | `none` | Optional | Bottom-right progress marker. |
 
 ### Exact Code for Above Slide
@@ -395,8 +402,9 @@ An N-column grid of team member cards, each featuring a photo placeholder block,
   kicker: [Who's building it],
   title: [The core package team],
   columns: 4,
+  radius: 50%, // Makes all avatars circular (or pass per-member)
   members: (
-    (name: [Jordan Reyes], role: [Platform Eng]),
+    (name: [Jordan Reyes], role: [Platform Eng], photo: "assets/jordan.jpg"),
     (name: [Priya Nathan], role: [Dev Platform VP]),
     (name: [Marcus Ito],   role: [Typography]),
     (name: [Ana Cole],     role: [Design Systems]),

@@ -188,11 +188,11 @@ A standalone comparison card with an upper label, title, divider line, and list 
 
 ## 6. `team-card()`
 
-Renders a structured team card with a dashed photo placeholder block, prominent name, and role description.
+Renders a structured team card with an avatar/photo block (or dashed placeholder), prominent name, and role description.
 
 ### Signature
 ```typst
-#team-card(name, role)
+#team-card(name, role, photo: none, radius: 3pt, height: 90pt)
 ```
 
 ### Parameters
@@ -201,11 +201,23 @@ Renders a structured team card with a dashed photo placeholder block, prominent 
 |---|---|---|---|
 | `name` | `content` | *Positional* | Person's name (13pt semibold). |
 | `role` | `content` | *Positional* | Person's title, team, or role description. |
+| `photo` / `avatar` / `image` | `content` / `string` | `none` | Custom photo image path (e.g. `"assets/jordan.jpg"`) or `image(...)` content. |
+| `radius` | `length` / `ratio` | `3pt` | Corner radius for the avatar box (use `50%` for circular avatars). |
+| `height` | `length` | `90pt` | Height of the photo/avatar container block. |
 
 ### Example
 
 ```typst
+// Default placeholder:
 #team-card([Marcus Vance], [Principal Infrastructure Architect])
+
+// Circular avatar with custom photo:
+#team-card(
+  [Priya Nathan],
+  [VP Platform Engineering],
+  photo: "assets/priya.jpg",
+  radius: 50%,
+)
 ```
 
 ---
@@ -274,11 +286,11 @@ Renders a grid of multiple metrics arranged across columns with customizable flo
 
 ## 9. `pull-quote()`
 
-A testimonial pull-quote with a prominent accent rule, large quote typography (32pt), and an author badge with name and role.
+A testimonial pull-quote with a prominent accent rule, large quote typography (32pt), and an author avatar badge with name and role.
 
 ### Signature
 ```typst
-#pull-quote(body, name, role)
+#pull-quote(body, name, role, photo: none, radius: 50%, size: 32pt)
 ```
 
 ### Parameters
@@ -288,6 +300,9 @@ A testimonial pull-quote with a prominent accent rule, large quote typography (3
 | `body` | `content` | *Positional* | Main quote text. |
 | `name` | `content` | *Positional* | Attribution name. |
 | `role` | `content` | *Positional* | Role or company title. |
+| `photo` / `avatar` / `image` | `content` / `string` | `none` | Custom photo image path (e.g. `"assets/david.jpg"`) or `image(...)` content. |
+| `radius` | `length` / `ratio` | `50%` | Avatar corner radius (default `50%` for circle). |
+| `size` | `length` | `32pt` | Diameter / size of the avatar badge. |
 
 ### Example
 
@@ -296,6 +311,8 @@ A testimonial pull-quote with a prominent accent rule, large quote typography (3
   [Adopting standard schema tables in our architectural reviews reduced API integration errors by 60%.],
   [David Chen],
   [Head of Developer Experience],
+  photo: "assets/david.jpg",
+  radius: 50%,
 )
 ```
 
