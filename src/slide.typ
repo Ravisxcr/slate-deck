@@ -338,28 +338,162 @@
   ]
 }
 
-#let _image-slide(image: none, caption-title: none, caption-body: none, progress: none, theme: auto) = context {
+#let _image-slide(
+  image: none,
+  src: none,
+  kicker: none,
+  kicker-icon: none,
+  title: none,
+  caption: none,
+  caption-title: none,
+  caption-body: none,
+  width: auto,
+  height: auto,
+  fit: auto,
+  align: center + horizon,
+  bleed: auto,
+  radius: auto,
+  border: false,
+  progress: none,
+  theme: auto,
+  ..rest,
+) = context {
   let t = typeset-theme.get()
   let st = _resolve-slide-theme(t, theme)
-  page(fill: st.border)[
-    #box(width: 100%, height: 100%, clip: true)[#image]
-    #if caption-title != none {
-      place(bottom + left)[
-        #block(fill: if st.is-dark { t.charcoal } else { t.navy }, inset: (x: spacing.xxl / 2, y: spacing.lg))[
-          #grid(
-            columns: (auto, auto),
-            column-gutter: spacing.md,
-            align: horizon,
-            text(font: fonts.display, weight: 700, size: 16pt, fill: t.on-navy)[#caption-title],
-            if caption-body != none {
-              text(font: fonts.body, size: type-scale.body, fill: t.on-navy-muted)[#caption-body]
-            } else { [] },
-          )
+  let raw-img = if image != none {
+    image
+  } else if src != none {
+    src
+  } else if rest.pos().len() > 0 {
+    rest.pos().at(0)
+  } else {
+    none
+  }
+
+  let is-bleed = if bleed != auto {
+    bleed
+  } else if kicker != none or title != none {
+    false
+  } else if caption-title != none or caption-body != none {
+    true
+  } else {
+    true
+  }
+
+  let effective-fit = if fit != auto {
+    fit
+  } else if is-bleed {
+    "cover"
+  } else {
+    "contain"
+  }
+
+  let effective-radius = if radius != auto {
+    radius
+  } else if is-bleed {
+    0pt
+  } else {
+    4pt
+  }
+
+  let effective-height = if height in ("fit", "full", "fill") {
+    if is-bleed { 100% } else if title != none { 340pt } else { 420pt }
+  } else if height != auto {
+    height
+  } else if is-bleed {
+    100%
+  } else if title != none {
+    340pt
+  } else {
+    420pt
+  }
+
+  let img-content = if type(raw-img) == str {
+    std.image(
+      _resolve-img-path(raw-img),
+      width: if width != auto { width } else { 100% },
+      height: if height != auto { height } else { 100% },
+      fit: effective-fit,
+    )
+  } else if raw-img != none {
+    raw-img
+  } else {
+    block(
+      width: 100%,
+      height: 100%,
+      fill: if st.is-dark { t.card-bg } else { t.border },
+      std.align(center + horizon)[
+        #text(font: fonts.mono, size: 14pt, fill: st.ink-faint)[asset / image placeholder]
+      ],
+    )
+  }
+
+  if is-bleed {
+    page(fill: st.border)[
+      #box(width: 100%, height: 100%, clip: true)[
+        #std.align(align)[#img-content]
+      ]
+      #if caption-title != none or caption-body != none {
+        place(bottom + left)[
+          #block(fill: if st.is-dark { t.charcoal } else { t.navy }, inset: (x: spacing.xxl / 2, y: spacing.lg))[
+            #grid(
+              columns: (auto, auto),
+              column-gutter: spacing.md,
+              align: std.horizon,
+              if caption-title != none {
+                text(font: fonts.display, weight: 700, size: 16pt, fill: t.on-navy)[#caption-title]
+              },
+              if caption-body != none {
+                text(font: fonts.body, size: type-scale.body, fill: t.on-navy-muted)[#caption-body]
+              },
+            )
+          ]
+        ]
+      }
+      #_footer-progress(progress, st.footer-fill)
+    ]
+  } else {
+    page(fill: st.bg)[
+      #pad(x: spacing.page-x, y: spacing.page-y)[
+        #if kicker != none [
+          #if kicker-icon != none {
+            grid(
+              columns: (auto, auto),
+              column-gutter: spacing.sm,
+              align: horizon,
+              icon(kicker-icon, size: 11pt, color: st.kicker-fill),
+              text(font: fonts.mono, size: type-scale.eyebrow, tracking: 0.08em, fill: st.kicker-fill)[#upper(kicker)],
+            )
+          } else {
+            kicker-label(kicker, color: st.kicker-fill)
+          }
+          #v(spacing.sm)
+        ]
+        #if title != none [
+          #text(font: fonts.display, weight: 700, size: type-scale.h2, fill: st.ink)[#title]
+          #v(spacing.lg)
+        ]
+        #std.align(align)[
+          #block(
+            width: if width != auto { width } else { 100% },
+            height: effective-height,
+            radius: effective-radius,
+            stroke: if border { 1pt + st.border } else { none },
+            clip: true,
+          )[
+            #std.align(align)[#img-content]
+          ]
+        ]
+        #if caption != none [
+          #v(spacing.xs)
+          #std.align(align)[
+            #text(font: fonts.mono, size: 9pt, fill: st.ink-muted)[#caption]
+          ]
         ]
       ]
-    }
-    #_footer-progress(progress, st.footer-fill)
-  ]
+      #_footer-progress(progress, st.footer-fill)
+    ]
+  }
 }
 
 #let _code-slide(

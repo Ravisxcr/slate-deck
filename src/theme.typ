@@ -48,6 +48,14 @@
   (hue, chroma)
 }
 
+#let _resolve-img-path(p) = {
+  if type(p) == str {
+    if p.starts-with("/") or p.starts-with(".") { p } else { "/" + p }
+  } else {
+    p
+  }
+}
+
 #let _resolve-bg(theme-val, hue) = {
   if type(theme-val) == color {
     theme-val

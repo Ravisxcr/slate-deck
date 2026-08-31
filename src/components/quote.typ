@@ -1,4 +1,4 @@
-#import "../theme.typ": typeset-theme, fonts, type-scale, spacing
+#import "../theme.typ": typeset-theme, fonts, type-scale, spacing, _resolve-img-path
 
 // Pull-quote: accent rule, large display-weight quote, avatar placeholder or custom photo + attribution.
 #let pull-quote(
@@ -27,7 +27,7 @@
     )
   } else {
     let img-content = if type(effective-photo) == str {
-      std.image(effective-photo, width: 100%, height: 100%, fit: "cover")
+      std.image(_resolve-img-path(effective-photo), width: 100%, height: 100%, fit: "cover")
     } else {
       effective-photo
     }
