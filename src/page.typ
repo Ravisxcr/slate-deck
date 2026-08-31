@@ -1,19 +1,19 @@
 #import "theme.typ": *
 
 // Call once at the top of a deck via `#show: deck.with(..)`. Builds the theme from an accent
-// color (RGB / hex string) or hue angle (one-line rebrand), stores it for every component to read,
-// and sets deck-wide text defaults. Does not itself emit a page -- `slide()` (src/slide.typ) creates
-// one page per slide via the `page()` function so each slide can carry its own background/margins.
+// color (RGB / hex string) and optional global theme ("light", "dark", "navy", "charcoal", "slate", "black"),
+// stores it for every component to read, and sets deck-wide text defaults.
+// Does not itself emit a page -- `slide()` (src/slide.typ) creates one page per slide via the `page()`
+// function so each slide can carry its own background/margins.
 #let deck(
   title: none,
   author: none,
-  accent: auto,
-  accent-hue: 250deg,
-  accent-chroma: auto,
+  accent: rgb("#4e61d8"),
+  theme: "light",
   progress: false,
   body,
 ) = {
-  let built = make-theme(accent: accent, accent-hue: accent-hue, accent-chroma: accent-chroma)
+  let built = make-theme(accent: accent, theme: theme)
   set document(title: title) if title != none
   set document(author: author) if author != none
   set page(width: page-size.width, height: page-size.height, margin: 0pt)

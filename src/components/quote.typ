@@ -17,7 +17,7 @@
         width: 32pt,
         height: 32pt,
         radius: 50%,
-        fill: t.border,
+        fill: if t.is-dark { t.card-bg } else { t.border },
         stroke: (paint: t.ink-faint, dash: "dashed"),
         align(center + horizon)[
           #text(font: fonts.mono, size: 7pt, fill: t.ink-faint)[photo]

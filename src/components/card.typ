@@ -5,14 +5,19 @@
 #let compare-card(label, title, items, recommended: false) = context {
   let t = typeset-theme.get()
   let border-color = if recommended { t.accent } else { t.border }
-  let label-color = if recommended { t.accent } else { t.ink-faint }
+  let label-color = if recommended { t.accent-kicker } else { t.ink-faint }
+  let fill-color = if recommended {
+    if t.is-dark { t.accent.transparentize(85%) } else { t.accent-soft }
+  } else {
+    t.card-bg
+  }
   block(
     width: 100%,
     height: 320pt,
     breakable: false,
     stroke: 1.5pt + border-color,
     radius: 2pt,
-    fill: if recommended { t.accent-soft } else { none },
+    fill: fill-color,
     inset: spacing.lg,
   )[
     #text(font: fonts.mono, size: 9pt, tracking: 0.08em, fill: label-color)[#upper(label)]
@@ -37,7 +42,7 @@
       width: 100%,
       height: 90pt,
       radius: 3pt,
-      fill: t.border,
+      fill: if t.is-dark { t.card-bg } else { t.border },
       stroke: (paint: t.ink-faint, dash: "dashed"),
       align(center + horizon)[
         #text(font: fonts.mono, size: 8pt, fill: t.ink-faint)[photo]

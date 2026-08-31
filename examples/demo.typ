@@ -1,6 +1,6 @@
 #import "../src/lib.typ": *
 
-#show: deck.with(title: "SlateDeck Demo", author: "Ravi", accent-hue: 250deg)
+#show: deck.with(title: "SlateDeck Demo", author: "Ravi", accent: rgb("#4e61d8"))
 
 #slide(
   kind: "title",
